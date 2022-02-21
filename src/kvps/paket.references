@@ -1,0 +1,5 @@
+McMaster.Extensions.CommandLineUtils
+FSharp.Core
+crayon
+Microsoft.Extensions.DependencyInjection
+LiteDB

@@ -1,0 +1,34 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net6.0</TargetFramework>
+    <Copyright>Copyright 2022 Tony Knight</Copyright>
+    <Version>0.0.0</Version>
+    <RootNamespace>kvps</RootNamespace>
+    <AssemblyName>kvps</AssemblyName>
+    <Description>A key value pair storage tool</Description>
+    <Authors>Tony Knight</Authors>
+    <PackAsTool>true</PackAsTool>
+    <ToolCommandName>kvps</ToolCommandName>
+    <RepositoryUrl>https://github.com/tonycknight/kvps</RepositoryUrl>
+    <PackageId>kvps-cli</PackageId>
+    <PackageProjectUrl>https://github.com/tonycknight/kvps</PackageProjectUrl>    
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="Utils.fs" />
+    <Compile Include="Config\Entities.fs" />
+    <Compile Include="Config\IConfigRepository.fs" />
+    <Compile Include="Config\EnvVarsConfigRepository.fs" />
+    <Compile Include="Config\IConfigProvider.fs" />
+    <Compile Include="Config\AggregateConfigProvider.fs" />
+    <Compile Include="KeyValues\Entities.fs" />
+    <Compile Include="KeyValues\IKeyValueRepository.fs" />
+    <Compile Include="KeyValues\MemoryKeyValueRepository.fs" />
+    <Compile Include="KeyValues\LiteDbKeyValueRepository.fs" />
+    <Compile Include="Rendering.fs" />
+    <Compile Include="Commands.fs" />
+    <Compile Include="Program.fs" />
+  </ItemGroup>
+  <Import Project="..\..\.paket\Paket.Restore.targets" />
+</Project>

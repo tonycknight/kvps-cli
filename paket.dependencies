@@ -1,0 +1,17 @@
+source https://api.nuget.org/v3/index.json
+
+storage: none
+framework: net6.0, net5.0, netstandard2.0, netstandard2.1
+nuget coverlet.collector 3.1.2
+nuget coverlet.msbuild 3.1.2
+nuget crayon 2.0.64
+nuget FsCheck.XUnit 2.16.4
+nuget FSharp.Core 6.0.3
+nuget FsUnit.Xunit 4.2.0
+nuget LiteDB
+nuget McMaster.Extensions.CommandLineUtils 4.0.1
+nuget Microsoft.Extensions.DependencyInjection
+nuget Microsoft.NET.Test.Sdk 16.11.0
+nuget nsubstitute 4.3.0
+nuget xunit 2.4.1
+nuget xunit.runner.visualstudio 2.4.3

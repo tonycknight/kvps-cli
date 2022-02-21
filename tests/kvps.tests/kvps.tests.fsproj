@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <IsPackable>false</IsPackable>
+    <GenerateProgramFile>false</GenerateProgramFile>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="KeyValues\LiteDbKeyValueRepositoryTests.fs" />
+    <Compile Include="Config\EnvVarsConfigRepositoryTests.fs" />
+    <Compile Include="Config\AggregateConfigProviderTests.fs" />
+    <Compile Include="StringsTests.fs" />
+    <Compile Include="IoTests.fs" />
+    <Compile Include="Program.fs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\kvps\kvps.fsproj" />
+  </ItemGroup>  
+  <Import Project="..\..\.paket\Paket.Restore.targets" />
+</Project>
