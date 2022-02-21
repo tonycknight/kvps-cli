@@ -1,6 +1,7 @@
 ﻿namespace kvps
 
 open System
+open System.Linq
 
 module Math=
     let max (x: int) (y: int) = Math.Max(x,y)
@@ -69,12 +70,9 @@ module Option=
 
 module Reflection=
     
-    open System.Linq
-
-    let getAsm()=
-        System.Reflection.Assembly.GetExecutingAssembly()
+    let getAsm() = System.Reflection.Assembly.GetExecutingAssembly()
     
-    let getAttrs(asm: System.Reflection.Assembly)= 
+    let getAttrs (asm: System.Reflection.Assembly) = 
         asm.GetCustomAttributes(true).OfType<Attribute>()
             |> Seq.map id
 
@@ -83,14 +81,14 @@ module Reflection=
             |> Option.nullToOption 
             |> Option.map f
     
-    let getVersionValue attrs=
+    let getVersionValue attrs =
         attrs |> getAttrValue<System.Reflection.AssemblyInformationalVersionAttribute> (fun a -> a.InformationalVersion)
 
-    let getCopyrightValue attrs=
+    let getCopyrightValue attrs =
         attrs |> getAttrValue<System.Reflection.AssemblyCopyrightAttribute> (fun a -> a.Copyright)
 
 module Seq=
-    let flattenSomes(values: seq<'a option>)=
+    let flattenSomes (values: seq<'a option>) =
         values |> Seq.filter Option.isSome |> Seq.map Option.get
 
 module LiteDb=
