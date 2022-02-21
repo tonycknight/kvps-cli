@@ -24,7 +24,6 @@
     <Compile Include="Config\AggregateConfigProvider.fs" />
     <Compile Include="KeyValues\Entities.fs" />
     <Compile Include="KeyValues\IKeyValueRepository.fs" />
-    <Compile Include="KeyValues\MemoryKeyValueRepository.fs" />
     <Compile Include="KeyValues\LiteDbKeyValueRepository.fs" />
     <Compile Include="Rendering.fs" />
     <Compile Include="Commands.fs" />

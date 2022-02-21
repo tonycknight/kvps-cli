@@ -92,3 +92,13 @@ module Reflection=
 module Seq=
     let flattenSomes(values: seq<'a option>)=
         values |> Seq.filter Option.isSome |> Seq.map Option.get
+
+module LiteDb=
+    open LiteDB
+
+    let connection dbName = 
+        let path = dbName |> sprintf "%s.db" |> Io.dataFilePath
+        // TODO: to encrypt: sprintf "Filename=%s;Password=%s" path "pw"
+        path |> sprintf "Filename=%s"
+        
+    let db(cn: string) = new LiteDatabase(cn)

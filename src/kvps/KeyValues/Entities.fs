@@ -31,3 +31,5 @@ module EntityMapping =
                         value = kv.value; 
                         tags = kv.tags; 
                         isSecret = kv.isSecret}
+
+    let mergeTags (ekv: KeyValue) (kv: KeyValue)= { kv with tags = ekv.tags}

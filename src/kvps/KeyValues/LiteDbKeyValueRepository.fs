@@ -1,7 +1,5 @@
 ﻿namespace kvps.KeyValues
 
-open System
-open System.IO
 open LiteDB
 open kvps
 
@@ -9,22 +7,14 @@ type LiteDbKeyValueRepository(config: Config.IConfigProvider)=
     
     let dbName() = config.Get().dbName
 
-    let cn() =        
-        dbName() |> sprintf "%s.db" |> Io.dataFilePath |> sprintf "Filename=%s"
-        // TODO: to encrypt: sprintf "Filename=%s;Password=%s" path "pw"
-        
-    let db(cn: string) =         
-        let r = new LiteDatabase(cn)
-        r
+    let db = dbName >> LiteDb.connection >> LiteDb.db
 
     let col(db: ILiteDatabase) =
         let col = db.GetCollection<KeyValueData>("kvps")        
         col.EnsureIndex(fun x -> x._id) |> ignore
         col.EnsureIndex(fun x -> x.tags) |> ignore
         col
-            
-    let mergeTags (ekv: KeyValue) (kv: KeyValue)= { kv with tags = ekv.tags}
-
+    
     let tagsExpr tags =
         let s = tags |> Seq.map (sprintf "tags[*] ANY = '%s'") |> Strings.join " OR "        
         BsonExpression.Create(s)
@@ -38,7 +28,7 @@ type LiteDbKeyValueRepository(config: Config.IConfigProvider)=
 
     let getValueAsync(key) =
         task {                
-            use db = cn() |> db
+            use db = db()
             let col = col db
             
             return! getValueAsyncDb col key        
@@ -46,13 +36,13 @@ type LiteDbKeyValueRepository(config: Config.IConfigProvider)=
 
     let setValueAsync(kv) =
         task {
-            use db = cn() |> db
+            use db = db()
             let col = col db
 
             let! existingKv = getValueAsyncDb col kv.key
             
             let kvd = match existingKv with
-                        | Some ekv when kv.tags.Length = 0 ->   kv |> mergeTags ekv |> EntityMapping.mapToKvData
+                        | Some ekv when kv.tags.Length = 0 ->   kv |> EntityMapping.mergeTags ekv |> EntityMapping.mapToKvData
                         | _ ->                                  EntityMapping.mapToKvData kv
 
             col.Upsert(kvd) |> ignore
@@ -62,7 +52,7 @@ type LiteDbKeyValueRepository(config: Config.IConfigProvider)=
 
     let listKeysAsync(tags: string[])=
         task {                
-            use db = cn() |> db
+            use db = db()
             let col = col db
 
             let query = col.Query()
@@ -77,7 +67,7 @@ type LiteDbKeyValueRepository(config: Config.IConfigProvider)=
 
     let deleteKeyAsync(key: string)=
         task{
-            use db = cn() |> db
+            use db = db()
             let col = col db
 
             col.Delete(key) |> ignore
@@ -87,7 +77,7 @@ type LiteDbKeyValueRepository(config: Config.IConfigProvider)=
 
     let getDbInfoAsync() =
         task {
-            use db = cn() |> db
+            use db = db()
             let col = col db
                         
             return { DbInfo.name = dbName(); 

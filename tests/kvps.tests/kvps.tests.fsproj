@@ -6,6 +6,7 @@
     <GenerateProgramFile>false</GenerateProgramFile>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="KeyValues\EntityMappingTests.fs" />
     <Compile Include="KeyValues\LiteDbKeyValueRepositoryTests.fs" />
     <Compile Include="Config\EnvVarsConfigRepositoryTests.fs" />
     <Compile Include="Config\AggregateConfigProviderTests.fs" />
