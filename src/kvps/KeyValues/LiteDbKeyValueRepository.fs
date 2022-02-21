@@ -7,19 +7,19 @@ type LiteDbKeyValueRepository(config: Config.IConfigProvider)=
     
     let dbName() = config.Get().dbName
 
-    let db = dbName >> LiteDb.connection >> LiteDb.db
-
-    let col(db: ILiteDatabase) =
-        let col = db.GetCollection<KeyValueData>("kvps")        
+    let db = dbName >> LiteDb.filePath >> LiteDb.connection >> LiteDb.db
+    
+    let col(db: ILiteDatabase) =        
+        let col = db.GetCollection<KeyValueData>("kvps")
         col.EnsureIndex(fun x -> x._id) |> ignore
-        col.EnsureIndex(fun x -> x.tags) |> ignore
+        col.EnsureIndex(fun x -> x.tags) |> ignore        
         col
     
     let tagsExpr tags =
         let s = tags |> Seq.map (sprintf "tags[*] ANY = '%s'") |> Strings.join " OR "        
         BsonExpression.Create(s)
 
-    let getValueAsyncDb (col: ILiteCollection<KeyValueData>) key =
+    let getValueAsyncDb key (col: ILiteCollection<KeyValueData>)  =
         task {
             let result = col.Query().Where(fun kv -> kv._id = key).FirstOrDefault()
 
@@ -29,9 +29,8 @@ type LiteDbKeyValueRepository(config: Config.IConfigProvider)=
     let getValueAsync(key) =
         task {                
             use db = db()
-            let col = col db
             
-            return! getValueAsyncDb col key        
+            return! col db |> getValueAsyncDb key 
         }
 
     let setValueAsync(kv) =
@@ -39,7 +38,7 @@ type LiteDbKeyValueRepository(config: Config.IConfigProvider)=
             use db = db()
             let col = col db
 
-            let! existingKv = getValueAsyncDb col kv.key
+            let! existingKv = col |> getValueAsyncDb kv.key 
             
             let kvd = match existingKv with
                         | Some ekv when kv.tags.Length = 0 ->   kv |> EntityMapping.mergeTags ekv |> EntityMapping.mapToKvData

@@ -96,9 +96,14 @@ module Seq=
 module LiteDb=
     open LiteDB
 
-    let connection dbName = 
-        let path = dbName |> sprintf "%s.db" |> Io.dataFilePath
-        // TODO: to encrypt: sprintf "Filename=%s;Password=%s" path "pw"
-        path |> sprintf "Filename=%s"
+    [<Literal>] 
+    let pw = "4737c58a-8a21-424d-bb88-da16a192ec07" // Filthy hack, we're just obfuscating files here
+
+    let filePath dbName = dbName |> sprintf "%s.db" |> Io.dataFilePath
+
+    let connection path = sprintf "Filename=%s;Password=%s" path pw 
         
-    let db(cn: string) = new LiteDatabase(cn)
+    let db (cn: string) = new LiteDatabase(cn)
+
+    let collection<'a> (name: string) (db: ILiteDatabase) =  db.GetCollection<'a>(name)
+        
