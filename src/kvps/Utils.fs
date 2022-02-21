@@ -51,7 +51,7 @@ module Io=
             Directory.CreateDirectory(dir) |> ignore
         Path.Combine(dir, fileName)
 
-    let dataFilePath = filePath "kvps" 
+    let dataFilePath = filePath "kvps-data" 
 
 module Console=
     let writeLine(value: string) = Console.Out.WriteLine(value)

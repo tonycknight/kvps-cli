@@ -1,6 +1,6 @@
-# kvps
+# kvps-cli
 
-[![Build & Release](https://github.com/tonycknight/kvps/actions/workflows/build.yml/badge.svg)](https://github.com/tonycknight/kvps/actions/workflows/build.yml)
+[![Build & Release](https://github.com/tonycknight/kvps-cli/actions/workflows/build.yml/badge.svg)](https://github.com/tonycknight/kvps-cli/actions/workflows/build.yml)
 
 A dotnet CLI tool for key value pair management.
 

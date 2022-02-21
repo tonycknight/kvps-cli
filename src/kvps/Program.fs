@@ -22,7 +22,7 @@ module ProgramBootstrap=
                 
         let header = 
             [
-                "kvps" |> Strings.magenta;
+                "kvps-cli" |> Strings.magenta;
                 "A key/value pair management tool" |> Strings.yellow;
                 "";
             ]
@@ -32,7 +32,7 @@ module ProgramBootstrap=
                     ] |> Seq.flattenSomes |> List.ofSeq
 
         let footer = [
-                "Repo: https://github.com/tonycknight/kvps" |> Strings.yellow;
+                "Repo: https://github.com/tonycknight/kvps-cli" |> Strings.yellow;
             ]            
 
         footer

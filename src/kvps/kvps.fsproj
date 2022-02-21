@@ -11,9 +11,9 @@
     <Authors>Tony Knight</Authors>
     <PackAsTool>true</PackAsTool>
     <ToolCommandName>kvps</ToolCommandName>
-    <RepositoryUrl>https://github.com/tonycknight/kvps</RepositoryUrl>
+    <RepositoryUrl>https://github.com/tonycknight/kvps-cli</RepositoryUrl>
     <PackageId>kvps-cli</PackageId>
-    <PackageProjectUrl>https://github.com/tonycknight/kvps</PackageProjectUrl>    
+    <PackageProjectUrl>https://github.com/tonycknight/kvps-cli</PackageProjectUrl>    
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Utils.fs" />
