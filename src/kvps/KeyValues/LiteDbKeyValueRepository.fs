@@ -22,13 +22,7 @@ type LiteDbKeyValueRepository(config: Config.IConfigProvider)=
         col.EnsureIndex(fun x -> x._id) |> ignore
         col.EnsureIndex(fun x -> x.tags) |> ignore
         col
-
-    let mapToKv (kv: KeyValueData)=
-        { KeyValue.key = kv._id; value = kv.value; tags = kv.tags; isSecret = kv.isSecret}
-
-    let mapToKvData (kv: KeyValue)=
-        { KeyValueData._id = kv.key; value = kv.value; tags = kv.tags; isSecret = kv.isSecret}
-
+            
     let mergeTags (ekv: KeyValue) (kv: KeyValue)= { kv with tags = ekv.tags}
 
     let tagsExpr tags =
@@ -39,7 +33,7 @@ type LiteDbKeyValueRepository(config: Config.IConfigProvider)=
         task {
             let result = col.Query().Where(fun kv -> kv._id = key).FirstOrDefault()
 
-            return result |> Option.nullToOption |> Option.map mapToKv            
+            return result |> Option.nullToOption |> Option.map EntityMapping.mapToKv            
         }
 
     let getValueAsync(key) =
@@ -58,8 +52,8 @@ type LiteDbKeyValueRepository(config: Config.IConfigProvider)=
             let! existingKv = getValueAsyncDb col kv.key
             
             let kvd = match existingKv with
-                        | Some ekv when kv.tags.Length = 0 ->   kv |> mergeTags ekv |> mapToKvData
-                        | _ ->                                  mapToKvData kv
+                        | Some ekv when kv.tags.Length = 0 ->   kv |> mergeTags ekv |> EntityMapping.mapToKvData
+                        | _ ->                                  EntityMapping.mapToKvData kv
 
             col.Upsert(kvd) |> ignore
 
@@ -78,7 +72,7 @@ type LiteDbKeyValueRepository(config: Config.IConfigProvider)=
                             | ts   ->   let expr = tagsExpr ts
                                         query.Where(expr)
                                         
-            return query.ToArray() |> Array.map mapToKv
+            return query.ToArray() |> Array.map EntityMapping.mapToKv
         }
 
     let deleteKeyAsync(key: string)=
