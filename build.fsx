@@ -18,7 +18,7 @@ open Fake.SystemHelper
 
 let packageDir = "./package"
 let publishDir = "./publish"
-let mainSolution = "./kvps.sln"
+let mainSolution = "./kvps-cli.sln"
 
 let runNumber = (match Fake.BuildServer.GitHubActions.Environment.CI false with
                     | true -> Fake.BuildServer.GitHubActions.Environment.RunNumber
