@@ -89,9 +89,7 @@ jobs:
         with:
           name: kvps-cli.nupkg
           path: ${{ github.workspace }}/artifacts
-
-      #- name: Setup nuget source
-      #  run: dotnet nuget add source --username USERNAME --password ${{ secrets.NUGET_PAT }} --store-password-in-clear-text --name nuget "https://api.nuget.org/v3/index.json"
+      
       - name: List sources
         run: dotnet nuget list source
 
