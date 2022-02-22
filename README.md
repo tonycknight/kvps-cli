@@ -8,6 +8,16 @@ A dotnet CLI tool for key value pair management.
 
 ---
 
+# Getting Started
+
+## Installation
+
+``kvps-cli`` is available from [Nuget](https://www.nuget.org/packages/kvps-cli/):
+
+``dotnet tool install kvps-cli -g``
+
+---
+
 # How to use
 
 ### Help:
@@ -47,3 +57,5 @@ A dotnet CLI tool for key value pair management.
 ``dotnet list``
 
 ``dotnet list -t <TAG1> -t <TAG2>``
+
+---
