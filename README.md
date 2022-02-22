@@ -2,6 +2,8 @@
 
 [![Build & Release](https://github.com/tonycknight/kvps-cli/actions/workflows/build.yml/badge.svg)](https://github.com/tonycknight/kvps-cli/actions/workflows/build.yml)
 
+![Nuget](https://img.shields.io/nuget/v/kvps-cli)
+
 A dotnet CLI tool for key value pair management.
 
 ---
