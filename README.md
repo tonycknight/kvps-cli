@@ -6,9 +6,17 @@
 
 A dotnet CLI tool for key value pair management.
 
+:warning: **Very beta!**
+
 ---
 
 # Getting Started
+
+## Dependenices
+
+You'll need the [.Net 6 runtime](https://dotnet.microsoft.com/en-us/download/dotnet/6.0) installed on your Windows machine.
+
+:warning: **This tool will not behave correctly under Linux or Mac OS.**
 
 ## Installation
 
@@ -162,8 +170,12 @@ $j.myTenantId
 
 ---
 
+
+
+---
+
 # Security
 
-:warning: **This tool is not a key vault equivalent. Please do not use this tool to store secrets**
+:warning: **This tool is not a key vault equivalent. Please do not use this tool to store secrets!**
 
 
