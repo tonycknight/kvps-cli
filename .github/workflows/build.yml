@@ -89,9 +89,6 @@ jobs:
         with:
           name: kvps-cli.nupkg
           path: ${{ github.workspace }}/artifacts
-      
-      - name: List sources
-        run: dotnet nuget list source
 
       - name: Push nuget package
         run: dotnet nuget push "artifacts/*.nupkg"  --api-key ${{ secrets.NUGET_PAT }} --source "nuget.org"
