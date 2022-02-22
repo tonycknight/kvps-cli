@@ -92,6 +92,8 @@ jobs:
 
       #- name: Setup nuget source
       #  run: dotnet nuget add source --username USERNAME --password ${{ secrets.NUGET_PAT }} --store-password-in-clear-text --name nuget "https://api.nuget.org/v3/index.json"
+      - name: List sources
+        run: dotnet nuget list source
 
       - name: Push nuget package
-        run: dotnet nuget push "artifacts/*.nupkg"  --api-key ${{ secrets.NUGET_PAT }} --source "nuget"
+        run: dotnet nuget push "artifacts/*.nupkg"  --api-key ${{ secrets.NUGET_PAT }} --source "nuget.org"
