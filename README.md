@@ -36,10 +36,10 @@ dotnet tool install kvps-cli -g
 dotnet kvps
 ``` 
 
-or 
+or if installed globally:
 
 ```
-kvps kvps -?
+kvps -?
 ```
 
 
