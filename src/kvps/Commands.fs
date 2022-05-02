@@ -209,4 +209,37 @@ module Commands=
                                         a.OnExecuteAsync(exec)
                                 )) |> ignore
 
+        cla.Command("import", (fun a -> a |> descr "Imports data into the DB." |> ignore
+        
+                                        let fileName = fileNameArg a
+
+                                        let exec(cts) = 
+                                            task {
+                                                
+
+                                                let js = fileName.Value |> Io.resolvePath |> Io.readFile
+
+                                                let data = Newtonsoft.Json.JsonConvert.DeserializeObject<KeyValueExport>(js)
+
+                                                if Object.ReferenceEquals(data, null) || 
+                                                    Object.ReferenceEquals(data.data, null) then
+                                                    invalidOp "The file was not a valid JSON file."
+                                                                                                    
+                                                let kvRepo = repo sp
+
+                                                let mutable count = 0
+
+                                                for kv in data.data do
+                                                    let! x = kvRepo.SetValueAsync(kv)
+                                                    if x then
+                                                        count <- count + 1
+
+                                                count |> sprintf "%i value(s) imported." |> Console.writeLine
+
+                                                return true |> Bool.toRc
+                                            }
+
+                                        a.OnExecuteAsync(exec)
+                                )) |> ignore
+
         cla.OnExecute(fun () -> cla.ShowHelp())

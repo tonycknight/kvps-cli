@@ -64,6 +64,9 @@ module Io=
     let writeFile filePath contents =
         System.IO.File.WriteAllText(filePath, contents)
 
+    let readFile filePath =
+        System.IO.File.ReadAllText(filePath)
+
 module Console=
     let writeLine(value: string) = Console.Out.WriteLine(value)
 
