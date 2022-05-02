@@ -15,11 +15,18 @@ module ProgramBootstrap=
          .AddSingleton(typedefof<KeyValues.IKeyValueRepository>, typedefof<KeyValues.LiteDbKeyValueRepository>)            
          .BuildServiceProvider()
 
+
     let internal appDescription()=        
         let attrs = getAsm() |> getAttrs 
-        let vsn = getVersionValue attrs
         let copyright = getCopyrightValue attrs
-                
+        let vsn = getVersionValue attrs        
+
+        let currentVersion = match vsn with 
+                                | Some vsn -> new System.Version(vsn)
+                                | None -> new System.Version()
+        let nugetLatest = NugetClient.getLatestVersion()        
+        let nugetInfo = if nugetLatest > currentVersion then sprintf "An upgrade is available: %A" nugetLatest |> Some else None 
+        
         let header = 
             [
                 "kvps-cli" |> Strings.magenta;
@@ -31,8 +38,10 @@ module ProgramBootstrap=
                                                     let beta = Strings.cyan "beta"
                                                     sprintf "%s %s" v beta
                                                     );
-                        copyright |> Option.map Strings.yellow
-                    ] |> Seq.flattenSomes |> List.ofSeq
+                        nugetInfo |> Option.map Strings.yellow
+                        copyright |> Option.map Strings.yellow                        
+                    ]                     
+                    |> Seq.flattenSomes |> List.ofSeq
 
         let footer = [
                 "Repo: https://github.com/tonycknight/kvps-cli" |> Strings.yellow;

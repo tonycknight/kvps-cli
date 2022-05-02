@@ -1,8 +1,7 @@
 {
   "profiles": {
     "kvps": {
-      "commandName": "Project",
-      "commandLineArgs": "get aaa"
+      "commandName": "Project"
     }
   }
 }
