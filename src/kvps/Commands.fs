@@ -215,8 +215,6 @@ module Commands=
 
                                         let exec(cts) = 
                                             task {
-                                                
-
                                                 let js = fileName.Value |> Io.resolvePath |> Io.readFile
 
                                                 let data = Newtonsoft.Json.JsonConvert.DeserializeObject<KeyValueExport>(js)
@@ -224,12 +222,24 @@ module Commands=
                                                 if Object.ReferenceEquals(data, null) || 
                                                     Object.ReferenceEquals(data.data, null) then
                                                     invalidOp "The file was not a valid JSON file."
-                                                                                                    
+
+                                                let validationErrors = 
+                                                    data.data 
+                                                            |> Seq.map (fun kv ->   if String.IsNullOrWhiteSpace(kv.key) ||
+                                                                                        String.IsNullOrWhiteSpace(kv.value) then
+                                                                                        Some "Invalid key/value data found."
+                                                                                    else None )
+                                                            |> Seq.flattenSomes
+                                                            |> Seq.truncate 1
+                                                            |> Strings.join Environment.NewLine
+                                                if validationErrors.Length > 0 then
+                                                    failwith validationErrors
+
                                                 let kvRepo = repo sp
 
                                                 let mutable count = 0
-
                                                 for kv in data.data do
+                                                    
                                                     let! x = kvRepo.SetValueAsync(kv)
                                                     if x then
                                                         count <- count + 1
