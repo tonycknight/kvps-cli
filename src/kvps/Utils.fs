@@ -54,6 +54,16 @@ module Io=
 
     let dataFilePath = filePath "kvps-data" 
 
+    let resolvePath (folder: string) =        
+        if Path.IsPathRooted(folder) then
+            folder
+        else 
+            let workingPath = Directory.GetCurrentDirectory()
+            Path.Combine(workingPath, folder)
+
+    let writeFile filePath contents =
+        System.IO.File.WriteAllText(filePath, contents)
+
 module Console=
     let writeLine(value: string) = Console.Out.WriteLine(value)
 

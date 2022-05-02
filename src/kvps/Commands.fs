@@ -16,6 +16,9 @@ module Commands=
 
     let private keyArg(cla: CommandLineApplication)=        
         cla.Argument("<KEY>", "The key.", false).IsRequired()
+
+    let private fileNameArg(cla: CommandLineApplication)=        
+        cla.Argument("<FILENAME>", "The file's name.", false).IsRequired()
         
     let private valueOption(cla: CommandLineApplication)=
         let opt = cla.Option("-v", "The key's value.", CommandOptionType.SingleValue).IsRequired()
@@ -183,5 +186,27 @@ module Commands=
                                             }
                                         a.OnExecuteAsync(exec)
                             )) |> ignore
+        
+        cla.Command("export", (fun a -> a |> descr "Exports the DB contents to a file." |> ignore
+        
+                                        let fileName = fileNameArg a
+
+                                        let exec(cts) = 
+                                            task {
+                                                let kvRepo = repo sp
+                                                                                                
+                                                let! kvs = kvRepo.ListKeysAsync( [||] )
+                                                let data = { KeyValueExport.empty with data = kvs }
+
+                                                let js = Newtonsoft.Json.JsonConvert.SerializeObject(data)
+                                                let f = fileName.Value |> Io.resolvePath
+                                                js |> Io.writeFile f
+                                                f |> sprintf "Written to %s" |> Console.writeLine
+                                                
+                                                return true |> Bool.toRc
+                                            }
+
+                                        a.OnExecuteAsync(exec)
+                                )) |> ignore
 
         cla.OnExecute(fun () -> cla.ShowHelp())

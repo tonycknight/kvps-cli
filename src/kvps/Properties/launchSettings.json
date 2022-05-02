@@ -1,7 +1,8 @@
 {
   "profiles": {
     "kvps": {
-      "commandName": "Project"
+      "commandName": "Project",
+      "commandLineArgs": "db export test.json"
     }
   }
 }
