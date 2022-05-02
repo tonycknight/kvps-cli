@@ -6,6 +6,12 @@ type KeyValue= {
     isSecret:   bool
     tags:       string[]
     }
+
+type KeyValueExport = {
+    version:    string
+    data:       KeyValue[]
+    } 
+with static member empty = { KeyValueExport.version = "1.0"; data = [||] }
     
 [<CLIMutable>]
 type KeyValueData= {

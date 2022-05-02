@@ -5,8 +5,16 @@ open McMaster.Extensions.CommandLineUtils
 open Microsoft.Extensions.DependencyInjection
 
 module ProgramBootstrap=
+    open System.Runtime.InteropServices
     open kvps.Reflection
 
+    let internal isSupportedOs() =
+        RuntimeInformation.IsOSPlatform(OSPlatform.Windows)
+
+    let internal checkIfSupportedOs()=
+        if isSupportedOs() |> not then
+            failwith "Unsupported OS! Apologies, only Windows is supported."
+        
     let internal serviceCollection()=
         let c = new ServiceCollection()
         
@@ -58,7 +66,9 @@ module Program=
     [<EntryPoint>]
     let main argv = 
         
-        try                        
+        try 
+            ProgramBootstrap.checkIfSupportedOs()
+
             use app = new CommandLineApplication()
             app.Name <- "kvps"
             app.Description <- ProgramBootstrap.appDescription()
