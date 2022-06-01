@@ -7,6 +7,10 @@ on:
     branches: [ main ]
   workflow_dispatch:
 
+env:
+  build-version-number: 0.1.${{ github.run_number }}  
+
+
 jobs:
   build:
     runs-on: ubuntu-latest
