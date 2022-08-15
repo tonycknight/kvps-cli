@@ -6,8 +6,6 @@
 
 A dotnet CLI tool for key value pair management.
 
-:warning: **Very beta!**
-
 ---
 
 # Getting Started
@@ -176,6 +174,6 @@ $j.myTenantId
 
 # Security
 
-:warning: **This tool is not a key vault equivalent. Please do not use this tool to store secrets!**
+:warning: **This tool is not a key vault equivalent!**
 
 
