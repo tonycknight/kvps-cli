@@ -12,6 +12,40 @@ env:
 
 
 jobs:
+  sca:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Setup .NET Core SDK
+        uses: actions/setup-dotnet@v1.9.0
+        with:
+          dotnet-version: "6.0.x"
+        
+      - name: dotnet SCA
+        run: |
+          dotnet tool restore
+          dotnet restore
+          dotnet list package --vulnerable --include-transitive | tee results.log
+
+          FOUND_VULN=`grep -c 'has the following vulnerable packages' results.log` || true
+          FOUND_CRIT=`grep -c 'Critical' results.log` || true
+          FOUND_HIGH=`grep -c 'High' results.log` || true
+          
+          if [[ "$FOUND_VULN" != "0" ]]
+          then
+            if [ "$FOUND_CRIT" == "0" -a "$FOUND_HIGH" == "0"]
+            then
+              echo "### Vulnerable packages found ###"
+              exit 0
+            fi
+            echo "### Critical/High vulnerable packages found ###"
+            exit 1
+          fi
+          echo "## No problems found ##"
+          exit 0
+
   build:
     runs-on: ubuntu-latest
 
@@ -41,14 +75,12 @@ jobs:
           name: tests.results
           path: |
             ./tests/**/TestResults/*
-            
       
       - name: Archive Code coverage
         uses: actions/upload-artifact@v2
         with:
           name: codecoverage
           path: ./publish/codecoverage/*.*
-
 
       - name: Unit test results
         uses: dorny/test-reporter@v1
@@ -75,10 +107,10 @@ jobs:
 
   
   nuget-release:
+    nane: create nuget release
     runs-on: ubuntu-latest
-    needs:   [ build ]
-    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/dev'
-
+    needs:   [ sca, build ]
+    #if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/dev'
 
     steps:
       - uses: actions/checkout@v2
@@ -98,6 +130,7 @@ jobs:
         run: dotnet nuget push "artifacts/*.nupkg"  --api-key ${{ secrets.NUGET_PAT }} --source "nuget.org"
 
   gh-release:
+    nane: create gh release
     runs-on: ubuntu-latest
     needs: [ nuget-release ]    
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
