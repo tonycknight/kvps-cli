@@ -66,12 +66,15 @@ module Program=
     [<EntryPoint>]
     let main argv = 
         
+        let appName = "kvps"
         try 
             ProgramBootstrap.checkIfSupportedOs()
 
             use app = new CommandLineApplication()
-            app.Name <- "kvps"
+            app.Name <- appName
             app.Description <- ProgramBootstrap.appDescription()
+            app.UnrecognizedArgumentHandling <- UnrecognizedArgumentHandling.Throw
+            app.MakeSuggestionsInErrorMessage <- true
             
             let opt = app.HelpOption(true) 
             
@@ -80,8 +83,7 @@ module Program=
             app.Command("set", Commands.setValueCmd sp) |> ignore
             app.Command("get", Commands.getValueCmd sp) |> ignore
             app.Command("del", Commands.deleteKeyCmd sp) |> ignore
-            app.Command("list", Commands.listKeysCmd sp) |> ignore
-            
+            app.Command("list", Commands.listKeysCmd sp) |> ignore            
             app.Command("db", Commands.dbCmd sp) |> ignore
 
             app.OnExecute(fun () -> app.ShowHelp())
@@ -89,8 +91,17 @@ module Program=
             argv |> app.Execute
             
         with
+            | :? UnrecognizedCommandParsingException as ex ->
+                ex.Message |> Strings.red |> System.Console.Error.WriteLine
+
+                let matches = ex.NearestMatches |> Seq.map (sprintf "%s %s" appName) |> Array.ofSeq
+                if matches.Length > 0 then
+                    System.Console.Error.WriteLine "Did you mean one of these commands?"
+                    matches |> Seq.iter System.Console.Error.WriteLine
+                
+                Bool.toRc false
             | ex ->              
-                ex.Message |> System.Console.Error.WriteLine
+                ex.Message |> Strings.red |> System.Console.Error.WriteLine
                 Bool.toRc false
     
     
