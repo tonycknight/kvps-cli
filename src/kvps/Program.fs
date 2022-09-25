@@ -94,7 +94,11 @@ module Program=
             | :? UnrecognizedCommandParsingException as ex ->
                 ex.Message |> Strings.red |> System.Console.Error.WriteLine
 
-                let matches = ex.NearestMatches |> Seq.map (sprintf "%s %s" appName) |> Array.ofSeq
+                let cmd = match ex.Command.Parent with
+                            | null -> appName
+                            | _ -> sprintf "%s %s" appName ex.Command.Name
+
+                let matches = ex.NearestMatches |> Seq.map (sprintf "%s %s" cmd) |> Array.ofSeq
                 if matches.Length > 0 then
                     System.Console.Error.WriteLine "Did you mean one of these commands?"
                     matches |> Seq.iter System.Console.Error.WriteLine
