@@ -122,6 +122,7 @@ Target.create "All" ignore
   ==> "Pack"
   ==> "Unit Tests"
   ==> "Consolidate code coverage"
+  ==> "SCA"
   ==> "All"
 
 Target.runOrDefault "All"
