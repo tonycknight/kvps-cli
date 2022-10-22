@@ -108,6 +108,12 @@ Target.create "Consolidate code coverage" (fun _ ->
     if not result.OK then failwithf "reportgenerator failed!"  
 )
 
+Target.create "dotnet sca" (fun _ ->
+    let args = "package --vulnerable --include-transitive"
+    let result = DotNet.exec id "list" args
+    if not result.OK then failwithf "dotnet sca failed!"  
+)
+
 Target.create "All" ignore
 
 "Clean"

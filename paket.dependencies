@@ -13,6 +13,6 @@ nuget McMaster.Extensions.CommandLineUtils 4.0.1
 nuget Microsoft.Extensions.DependencyInjection
 nuget Microsoft.NET.Test.Sdk 16.11.0
 nuget nsubstitute 4.3.0
-nuget NuGet.Protocol 6.1.0
+nuget NuGet.Protocol
 nuget xunit 2.4.1
 nuget xunit.runner.visualstudio 2.4.3
