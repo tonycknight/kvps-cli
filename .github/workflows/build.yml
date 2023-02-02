@@ -19,7 +19,7 @@ jobs:
       - uses: actions/checkout@v2
 
       - name: Setup .NET Core SDK
-        uses: actions/setup-dotnet@v1.9.0
+        uses: actions/setup-dotnet@v3
         with:
           dotnet-version: "6.0.x"
         
@@ -50,10 +50,10 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
 
       - name: Setup .NET Core SDK
-        uses: actions/setup-dotnet@v1.9.0
+        uses: actions/setup-dotnet@v3
         with:
           dotnet-version: "6.0.x"
         
@@ -64,20 +64,20 @@ jobs:
         run: dotnet fake run "build.fsx" -t "All"
 
       - name: Archive tool nupkg
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: kvps-cli.nupkg
           path: ./package/kvps*.nupkg
 
       - name: Archive Test results
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: tests.results
           path: |
             ./tests/**/TestResults/*
       
       - name: Archive Code coverage
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: codecoverage
           path: ./publish/codecoverage/*.*
@@ -113,15 +113,15 @@ jobs:
     #if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/dev'
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
 
       - name: Setup .NET Core SDK
-        uses: actions/setup-dotnet@v1.9.0
+        uses: actions/setup-dotnet@v3
         with:
           dotnet-version: "6.0.x"
 
       - name: Download package
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v3
         with:
           name: kvps-cli.nupkg
           path: ${{ github.workspace }}/artifacts
@@ -136,7 +136,7 @@ jobs:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
 
     steps:    
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
 
       - name: Create Release
         uses: ncipollo/release-action@v1
