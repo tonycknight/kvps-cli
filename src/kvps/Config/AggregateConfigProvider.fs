@@ -2,17 +2,15 @@
 
 open kvps
 
-type AggregateConfigProvider(configRepo: IConfigRepository)=
-    
-    let getFromRepo() =
-        let config = Configuration.Default 
+type AggregateConfigProvider(configRepo: IConfigRepository) =
 
-        { config with 
-            dbName = configRepo.Value(nameof Unchecked.defaultof<Configuration>.dbName) |> Option.nullToDefault config.dbName
-        }
+    let getFromRepo () =
+        let config = Configuration.Default
+
+        { config with
+            dbName =
+                configRepo.Value(nameof Unchecked.defaultof<Configuration>.dbName)
+                |> Option.nullToDefault config.dbName }
 
     interface IConfigProvider with
-        member this.Get() = getFromRepo()
-
-
-
+        member this.Get() = getFromRepo ()
