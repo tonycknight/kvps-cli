@@ -27,7 +27,7 @@ NUGET
       NETStandard.Library (>= 2.0.3)
       NHamcrest (>= 2.0.1 < 2.1)
       xunit (>= 2.4.1 < 2.5)
-    LiteDB (5.0.11)
+    LiteDB (5.0.15)
     McMaster.Extensions.CommandLineUtils (4.0.1)
       System.ComponentModel.Annotations (>= 5.0)
     Microsoft.Bcl.AsyncInterfaces (6.0) - restriction: || (&& (== net5.0) (>= net461)) (&& (== net5.0) (< netstandard2.1)) (&& (== net6.0) (>= net461)) (&& (== net6.0) (< netstandard2.1)) (== netstandard2.0) (&& (== netstandard2.1) (>= net461))
