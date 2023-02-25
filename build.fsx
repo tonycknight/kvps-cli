@@ -124,8 +124,8 @@ Target.create "SCA" (fun _ ->
     if not result.OK then
         failwithf "dotnet sca failed!")
 
-Target.create "Check Format" (fun _ ->
-    let args = ". --recurse --check"
+Target.create "Check Style Rules" (fun _ ->
+    let args = "./src/ ./tests/ --recurse --check"
     let result = DotNet.exec id "fantomas" args
 
     if result.OK then
@@ -136,7 +136,7 @@ Target.create "Check Format" (fun _ ->
         failwithf "Errors while checking formatting: %A" result.Errors)
 
 Target.create "Apply Style Rules" (fun _ ->
-    let args = ". --recurse"
+    let args = "./src/ ./tests/ --recurse"
     let result = DotNet.exec id "fantomas" args
 
     if result.OK then
@@ -148,7 +148,7 @@ Target.create "All" ignore
 
 "Clean"
 ==> "Restore"
-==> "Check Format"
+==> "Check Style Rules"
 ==> "Build"
 ==> "Unit Tests"
 ==> "Consolidate code coverage"
