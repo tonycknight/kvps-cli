@@ -3,118 +3,125 @@
 open System
 open System.Linq
 
-module Math=
-    let max (x: int) (y: int) = Math.Max(x,y)
-    let min (x: int) (y: int) = Math.Min(x,y)
+module Math =
+    let max (x: int) (y: int) = Math.Max(x, y)
+    let min (x: int) (y: int) = Math.Min(x, y)
 
-module Strings=
+module Strings =
     let join (delimiter: string) (values: seq<string>) = String.Join(delimiter, values)
 
-    let stars (value: string) = new string('*', value.Length)
+    let stars (value: string) = new string ('*', value.Length)
 
     let trim (value: string) = value.Trim()
 
     let notEmpty (value: string) = String.IsNullOrWhiteSpace(value) |> not
 
-    let trimSeq (values: seq<string>) = values |> Seq.map trim |> Seq.filter notEmpty
+    let trimSeq (values: seq<string>) =
+        values |> Seq.map trim |> Seq.filter notEmpty
 
-    let padR length (value: string) = 
+    let padR length (value: string) =
         let pad = length - value.Length |> Math.max 0
         new String(' ', pad) |> sprintf "%s%s" value
-        
-    let padRSeq maxLength (values: seq<string>)=
-        values |> Seq.map (padR maxLength)
 
-    let maxLength (values: seq<string>) =         
-        values  |> Seq.map (fun s -> s.Length) 
-                |> Seq.fold (fun longest x -> if longest > x then longest else x) 0
+    let padRSeq maxLength (values: seq<string>) = values |> Seq.map (padR maxLength)
 
-    let green(value: string) = Crayon.Output.Bright.Green(value)
+    let maxLength (values: seq<string>) =
+        values
+        |> Seq.map (fun s -> s.Length)
+        |> Seq.fold (fun longest x -> if longest > x then longest else x) 0
 
-    let red(value: string) = Crayon.Output.Bright.Red(value)
+    let green (value: string) = Crayon.Output.Bright.Green(value)
 
-    let cyan(value: string) = Crayon.Output.Bright.Cyan(value)
+    let red (value: string) = Crayon.Output.Bright.Red(value)
 
-    let yellow(value: string) = Crayon.Output.Bright.Yellow(value)
+    let cyan (value: string) = Crayon.Output.Bright.Cyan(value)
 
-    let magenta(value: string) = Crayon.Output.Bright.Magenta(value)
+    let yellow (value: string) = Crayon.Output.Bright.Yellow(value)
 
-module Bool=
-    let toRc = function | true -> 0 | false -> 2
+    let magenta (value: string) = Crayon.Output.Bright.Magenta(value)
 
-module Io=
+module Bool =
+    let toRc =
+        function
+        | true -> 0
+        | false -> 2
+
+module Io =
     open System.IO
-    
-    let filePath folder fileName = 
+
+    let filePath folder fileName =
         let root = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)
         let dir = Path.Combine(root, folder)
+
         if Directory.Exists(dir) |> not then
             Directory.CreateDirectory(dir) |> ignore
+
         Path.Combine(dir, fileName)
 
-    let dataFilePath = filePath "kvps-data" 
+    let dataFilePath = filePath "kvps-data"
 
-    let resolvePath (folder: string) =        
+    let resolvePath (folder: string) =
         if Path.IsPathRooted(folder) then
             folder
-        else 
+        else
             let workingPath = Directory.GetCurrentDirectory()
             Path.Combine(workingPath, folder)
 
     let writeFile filePath contents =
         System.IO.File.WriteAllText(filePath, contents)
 
-    let readFile filePath =
-        System.IO.File.ReadAllText(filePath)
+    let readFile filePath = System.IO.File.ReadAllText(filePath)
 
-module Console=
-    let writeLine(value: string) = Console.Out.WriteLine(value)
+module Console =
+    let writeLine (value: string) = Console.Out.WriteLine(value)
 
-    let writeLines(values: seq<string>) =
-        values |> Seq.iter writeLine
+    let writeLines (values: seq<string>) = values |> Seq.iter writeLine
 
-module Option=
+module Option =
     let nullToOption (value) =
-        if Object.ReferenceEquals(value, null) then None
-        else Some value
+        if Object.ReferenceEquals(value, null) then
+            None
+        else
+            Some value
 
     let nullToDefault defaultValue value =
         value |> nullToOption |> Option.defaultValue defaultValue
 
-module Reflection=
-    
-    let getAsm() = System.Reflection.Assembly.GetExecutingAssembly()
-    
-    let getAttrs (asm: System.Reflection.Assembly) = 
-        asm.GetCustomAttributes(true).OfType<Attribute>()
-            |> Seq.map id
+module Reflection =
+
+    let getAsm () =
+        System.Reflection.Assembly.GetExecutingAssembly()
+
+    let getAttrs (asm: System.Reflection.Assembly) =
+        asm.GetCustomAttributes(true).OfType<Attribute>() |> Seq.map id
 
     let getAttrValue<'a when 'a :> Attribute> (f: 'a -> string) (attrs: seq<Attribute>) =
-        attrs.OfType<'a>().FirstOrDefault() 
-            |> Option.nullToOption 
-            |> Option.map f
-    
+        attrs.OfType<'a>().FirstOrDefault() |> Option.nullToOption |> Option.map f
+
     let getVersionValue attrs =
-        attrs |> getAttrValue<System.Reflection.AssemblyInformationalVersionAttribute> (fun a -> a.InformationalVersion)
+        attrs
+        |> getAttrValue<System.Reflection.AssemblyInformationalVersionAttribute> (fun a -> a.InformationalVersion)
 
     let getCopyrightValue attrs =
-        attrs |> getAttrValue<System.Reflection.AssemblyCopyrightAttribute> (fun a -> a.Copyright)
+        attrs
+        |> getAttrValue<System.Reflection.AssemblyCopyrightAttribute> (fun a -> a.Copyright)
 
-module Seq=
+module Seq =
     let flattenSomes (values: seq<'a option>) =
         values |> Seq.filter Option.isSome |> Seq.map Option.get
 
-module LiteDb=
+module LiteDb =
     open LiteDB
 
-    [<Literal>] 
+    [<Literal>]
     let pw = "4737c58a-8a21-424d-bb88-da16a192ec07" // Filthy hack, we're just obfuscating files here
 
-    let filePath dbName = dbName |> sprintf "%s.db" |> Io.dataFilePath
+    let filePath dbName =
+        dbName |> sprintf "%s.db" |> Io.dataFilePath
 
-    let connection path = sprintf "Filename=%s;Password=%s" path pw 
-        
+    let connection path =
+        sprintf "Filename=%s;Password=%s" path pw
+
     let db (cn: string) = new LiteDatabase(cn)
 
-    let collection<'a> (name: string) (db: ILiteDatabase) =  db.GetCollection<'a>(name)
-        
+    let collection<'a> (name: string) (db: ILiteDatabase) = db.GetCollection<'a>(name)
