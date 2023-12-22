@@ -58,12 +58,11 @@ jobs:
         uses: actions/setup-dotnet@v3
         with:
           dotnet-version: "${{ env.dotnet_version }}"
-        
-      - name: dotnet tool restore
-        run: dotnet tool restore
-              
-      - name: Run build
-        run: dotnet run --project ./build/build.fsproj -t "Tests"
+          
+      - name: Run tests
+        run: |
+            dotnet tool restore
+            dotnet run --project ./build/build.fsproj -t "Tests"
 
       - name: Archive Test results
         uses: actions/upload-artifact@v3
@@ -112,12 +111,11 @@ jobs:
         uses: actions/setup-dotnet@v3
         with:
           dotnet-version: "${{ env.dotnet_version }}"
-        
-      - name: dotnet tool restore
-        run: dotnet tool restore
-              
-      - name: Run build
-        run: dotnet run --project ./build/build.fsproj -t "Build"
+          
+      - name: Build
+        run: |
+            dotnet tool restore
+            dotnet run --project ./build/build.fsproj -t "Build"
 
       - name: Archive tool nupkg
         uses: actions/upload-artifact@v3
