@@ -128,6 +128,7 @@ jobs:
     name: Nuget release
     runs-on: ubuntu-latest
     needs:   [ sca, build, style-checks, tests ]
+    if: github.event_name == 'push'
     
     steps:
       - uses: actions/checkout@v3
