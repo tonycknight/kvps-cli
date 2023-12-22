@@ -6,4 +6,4 @@ $ErrorActionPreference = 'Stop'
 
 & dotnet tool restore
 
-& dotnet fake run "build.fsx" -t $Target
+& dotnet run --project ./build/build.fsproj -t $Target

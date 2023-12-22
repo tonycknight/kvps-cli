@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
     <IsPackable>false</IsPackable>
     <GenerateProgramFile>false</GenerateProgramFile>
   </PropertyGroup>
   <ItemGroup>
+    <None Include="paket.references" />
     <Compile Include="KeyValues\EntityMappingTests.fs" />
     <Compile Include="KeyValues\LiteDbKeyValueRepositoryTests.fs" />
     <Compile Include="Config\EnvVarsConfigRepositoryTests.fs" />
@@ -18,6 +19,6 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\src\kvps\kvps.fsproj" />
-  </ItemGroup>  
+  </ItemGroup>
   <Import Project="..\..\.paket\Paket.Restore.targets" />
 </Project>
