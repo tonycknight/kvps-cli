@@ -67,7 +67,7 @@ let testOptions (opts: DotNet.TestOptions) =
         NoBuild = false
         Configuration = DotNet.BuildConfiguration.Debug
         Logger = Some "trx;LogFileName=test_results.trx"
-        //Filter = Some "OS!=Windows";
+        Filter = Some "OS!=Windows"
         MSBuildParams =
             { opts.MSBuildParams with
                 Properties = properties } }
