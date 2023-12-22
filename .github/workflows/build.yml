@@ -42,7 +42,7 @@ jobs:
         with:
           dotnet-version: "${{ env.dotnet_version }}"
                       
-      - name: SCA checks
+      - name: Style checks
         run: |
             dotnet tool restore
             dotnet run --project ./build/build.fsproj -t "Check Style Rules"
