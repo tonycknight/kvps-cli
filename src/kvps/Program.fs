@@ -31,14 +31,15 @@ module ProgramBootstrap =
 
         let currentVersion =
             match vsn with
-            | Some vsn -> 
-                // Trim versions that are suffixed with a commit hash. 
-                let vsn = match vsn.IndexOf('+') with
-                            | x when x >= 0 -> vsn.Substring(0, x)
-                            | _ -> vsn
+            | Some vsn ->
+                // Trim versions that are suffixed with a commit hash.
+                let vsn =
+                    match vsn.IndexOf('+') with
+                    | x when x >= 0 -> vsn.Substring(0, x)
+                    | _ -> vsn
+
                 new System.Version(vsn)
-            | None -> 
-                new System.Version()
+            | None -> new System.Version()
 
         let nugetLatest = NugetClient.getLatestVersion ()
 
