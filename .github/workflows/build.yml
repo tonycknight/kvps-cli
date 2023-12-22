@@ -9,6 +9,7 @@ on:
 
 env:
   build-version-number: 0.1.${{ github.run_number }}  
+  dotnet_version: 8.x
 
 
 jobs:
@@ -21,7 +22,7 @@ jobs:
       - name: Setup .NET Core SDK
         uses: actions/setup-dotnet@v3
         with:
-          dotnet-version: "6.0.x"
+          dotnet-version: "${{ env.dotnet_version }}"
         
       - name: dotnet SCA
         run: |
@@ -55,7 +56,7 @@ jobs:
       - name: Setup .NET Core SDK
         uses: actions/setup-dotnet@v3
         with:
-          dotnet-version: "6.0.x"
+          dotnet-version: "${{ env.dotnet_version }}"
         
       - name: dotnet tool restore
         run: dotnet tool restore
@@ -118,7 +119,7 @@ jobs:
       - name: Setup .NET Core SDK
         uses: actions/setup-dotnet@v3
         with:
-          dotnet-version: "6.0.x"
+          dotnet-version: "${{ env.dotnet_version }}"
 
       - name: Download package
         uses: actions/download-artifact@v3
