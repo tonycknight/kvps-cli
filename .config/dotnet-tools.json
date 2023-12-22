@@ -3,7 +3,7 @@
   "isRoot": true,
   "tools": {
     "paket": {
-      "version": "6.2.1",
+      "version": "8.0.0",
       "commands": [
         "paket"
       ]
@@ -15,7 +15,7 @@
       ]
     },
     "dotnet-reportgenerator-globaltool": {
-      "version": "5.0.4",
+      "version": "5.2.0",
       "commands": [
         "reportgenerator"
       ]
@@ -24,6 +24,12 @@
       "version": "5.2.2",
       "commands": [
         "fantomas"
+      ]
+    },
+    "pkgchk-cli": {
+      "version": "0.1.10",
+      "commands": [
+        "pkgchk"
       ]
     }
   }

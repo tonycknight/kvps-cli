@@ -35,7 +35,6 @@ module Rendering =
         meta |> Seq.append lines |> Seq.filter (fun s -> s.Length > 0)
 
     let renderKvList (kvs: seq<KeyValue>) =
-        // TODO: console width?
         let len = kvs |> Seq.map (fun kv -> kv.key) |> Strings.maxLength
 
         kvs

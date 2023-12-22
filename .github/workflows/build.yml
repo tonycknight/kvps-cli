@@ -9,10 +9,12 @@ on:
 
 env:
   build-version-number: 0.1.${{ github.run_number }}  
+  dotnet_version: 8.x
 
 
 jobs:
   sca:
+    name: SCA
     runs-on: ubuntu-latest
 
     steps:
@@ -21,32 +23,15 @@ jobs:
       - name: Setup .NET Core SDK
         uses: actions/setup-dotnet@v3
         with:
-          dotnet-version: "6.0.x"
-        
-      - name: dotnet SCA
+          dotnet-version: "${{ env.dotnet_version }}"
+                      
+      - name: SCA checks
         run: |
-          dotnet tool restore
-          dotnet restore
-          dotnet list package --vulnerable --include-transitive | tee results.log
+            dotnet tool restore
+            dotnet run --project ./build/build.fsproj -t "SCA"
 
-          FOUND_VULN=`grep -c 'has the following vulnerable packages' results.log` || true
-          FOUND_CRIT=`grep -c 'Critical' results.log` || true
-          FOUND_HIGH=`grep -c 'High' results.log` || true
-          
-          if [[ "$FOUND_VULN" != "0" ]]
-          then
-            if [ "$FOUND_CRIT" == "0" -a "$FOUND_HIGH" == "0"]
-            then
-              echo "### Vulnerable packages found ###"
-              exit 0
-            fi
-            echo "### Critical/High vulnerable packages found ###"
-            exit 1
-          fi
-          echo "## No problems found ##"
-          exit 0
-
-  build:
+  style-checks:
+    name: Style Checks
     runs-on: ubuntu-latest
 
     steps:
@@ -55,19 +40,29 @@ jobs:
       - name: Setup .NET Core SDK
         uses: actions/setup-dotnet@v3
         with:
-          dotnet-version: "6.0.x"
-        
-      - name: dotnet tool restore
-        run: dotnet tool restore
-              
-      - name: Run build
-        run: dotnet fake run "build.fsx" -t "All"
+          dotnet-version: "${{ env.dotnet_version }}"
+                      
+      - name: SCA checks
+        run: |
+            dotnet tool restore
+            dotnet run --project ./build/build.fsproj -t "Check Style Rules"
 
-      - name: Archive tool nupkg
-        uses: actions/upload-artifact@v3
+  tests:
+    name: Test
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup .NET Core SDK
+        uses: actions/setup-dotnet@v3
         with:
-          name: kvps-cli.nupkg
-          path: ./package/kvps*.nupkg
+          dotnet-version: "${{ env.dotnet_version }}"
+          
+      - name: Run tests
+        run: |
+            dotnet tool restore
+            dotnet run --project ./build/build.fsproj -t "Tests"
 
       - name: Archive Test results
         uses: actions/upload-artifact@v3
@@ -104,13 +99,10 @@ jobs:
           show_class_names: true
           link_missing_lines: true
           report_name: code coverage results
-
-  
-  nuget-release:
-    name: nuget release
+            
+  build:
+    name: Build and Package
     runs-on: ubuntu-latest
-    needs:   [ sca, build ]
-    #if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/dev'
 
     steps:
       - uses: actions/checkout@v3
@@ -118,7 +110,33 @@ jobs:
       - name: Setup .NET Core SDK
         uses: actions/setup-dotnet@v3
         with:
-          dotnet-version: "6.0.x"
+          dotnet-version: "${{ env.dotnet_version }}"
+          
+      - name: Build
+        run: |
+            dotnet tool restore
+            dotnet run --project ./build/build.fsproj -t "Build"
+
+      - name: Archive tool nupkg
+        uses: actions/upload-artifact@v3
+        with:
+          name: kvps-cli.nupkg
+          path: ./package/kvps*.nupkg
+
+  
+  nuget-release:
+    name: Nuget release
+    runs-on: ubuntu-latest
+    needs:   [ sca, build, style-checks, tests ]
+    if: github.event_name == 'push'
+    
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup .NET Core SDK
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: "${{ env.dotnet_version }}"
 
       - name: Download package
         uses: actions/download-artifact@v3
@@ -130,7 +148,7 @@ jobs:
         run: dotnet nuget push "artifacts/*.nupkg"  --api-key ${{ secrets.NUGET_PAT }} --source "nuget.org"
 
   gh-release:
-    name: gh release
+    name: GH release
     runs-on: ubuntu-latest
     needs: [ nuget-release ]    
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
@@ -143,5 +161,5 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           tag: v${{ env.build-version-number }}
-          prerelease: true
+          prerelease: false
           generateReleaseNotes: true
