@@ -12,7 +12,7 @@ A dotnet CLI tool for key value pair management.
 
 ## Dependenices
 
-You'll need the [.Net 6 runtime](https://dotnet.microsoft.com/en-us/download/dotnet/6.0) installed on your Windows machine.
+You'll need the [.Net 8 runtime](https://dotnet.microsoft.com/en-us/download/dotnet/8.0) installed on your Windows machine.
 
 :warning: **This tool will not behave correctly under Linux or Mac OS.**
 
