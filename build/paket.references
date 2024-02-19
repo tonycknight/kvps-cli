@@ -11,3 +11,4 @@ Fake.DotNet.AssemblyInfoFile
 Fake.DotNet.Paket
 Fake.IO.FileSystem
 Fake.Tools.Git
+NuGet.Protocol
