@@ -15,6 +15,7 @@
     <PackageId>kvps-cli</PackageId>
     <PackageProjectUrl>https://github.com/tonycknight/kvps-cli</PackageProjectUrl>
     <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
   </PropertyGroup>
   <ItemGroup>
     <None Include="paket.references" />
