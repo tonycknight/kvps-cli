@@ -28,7 +28,7 @@ jobs:
       - name: SCA checks
         run: |
             dotnet tool restore
-            pkgchk --vulnerable --deprecated --transitive            
+            dotnet pkgchk --vulnerable --deprecated --transitive            
 
   style-checks:
     name: Style Checks
