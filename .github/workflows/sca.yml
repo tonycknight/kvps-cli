@@ -18,12 +18,12 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Setup .NET SDK
-        uses: actions/setup-dotnet@v3
+        uses: actions/setup-dotnet@v4
         
       - name: dotnet SCA
         run: |
           dotnet tool restore
-          dotnet run --project ./build/build.fsproj -t "SCA"
+          dotnet pkgchk --vulnerable --deprecated --transitive            
