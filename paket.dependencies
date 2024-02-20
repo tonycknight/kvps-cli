@@ -13,7 +13,6 @@ nuget McMaster.Extensions.CommandLineUtils
 nuget Microsoft.Extensions.DependencyInjection
 nuget Microsoft.NET.Test.Sdk
 nuget nsubstitute
-nuget NuGet.Protocol
 nuget Tk.Nuget
 nuget System.Net.Http
 nuget System.Text.RegularExpressions
