@@ -7,11 +7,8 @@ module Nuget =
     let packageId = "kvps-cli"
 
     let private client () = new NugetClient()
-            
-    let getUpgradeVersion (currentVersion) = 
-        match client() |> _.GetUpgradeVersionAsync(packageId, currentVersion, false).Result with
+
+    let getUpgradeVersion (currentVersion) =
+        match client () |> _.GetUpgradeVersionAsync(packageId, currentVersion, false).Result with
         | null -> None
         | x -> Some x
-        
-        
-    

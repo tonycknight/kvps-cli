@@ -35,7 +35,6 @@ let (==>!) x y = x ==> y |> ignore
 
 let (?=>!) x y = x ?=> y |> ignore
 
-
 let assemblyInfoParams (buildParams) =
     [ ("Version", version); ("AssemblyInformationalVersion", infoVersion) ]
     |> List.append buildParams
@@ -99,7 +98,11 @@ let initTargets () =
     Target.create "Clean" (fun _ ->
         !! "src/**/bin" ++ "src/**/obj" |> Shell.cleanDirs
 
-        !! "tests/**/bin" ++ "tests/**/obj" ++ "tests/**/TestResults" ++ publishDir ++ packageDir
+        !! "tests/**/bin"
+        ++ "tests/**/obj"
+        ++ "tests/**/TestResults"
+        ++ publishDir
+        ++ packageDir
         |> Shell.cleanDirs)
 
     Target.create "Restore" (fun _ -> !!mainSolution |> Seq.iter (DotNet.restore restoreOptions))
@@ -162,8 +165,7 @@ let initTargets () =
 
     "Clean" ?=>! "Restore"
 
-    "Clean" ==> "Restore" ==> "Compile" ==> "Pack" ==> "Echo variables"
-    ==>! "Build"
+    "Clean" ==> "Restore" ==> "Compile" ==> "Pack" ==> "Echo variables" ==>! "Build"
 
     "Restore" ==> "Unit Tests" ==> "Consolidate code coverage" ==>! "Tests"
 

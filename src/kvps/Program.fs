@@ -28,12 +28,12 @@ module ProgramBootstrap =
         let attrs = getAsm () |> getAttrs
         let copyright = getCopyrightValue attrs
         let vsn = getVersionValue attrs
-        
-        let nugetInfo =            
-            vsn 
-            |> Option.bind Nuget.getUpgradeVersion 
+
+        let nugetInfo =
+            vsn
+            |> Option.bind Nuget.getUpgradeVersion
             |> Option.map (sprintf "An upgrade is available: %s")
-            
+
         let header =
             [ Nuget.packageId |> Strings.magenta
               "A key/value pair management tool" |> Strings.yellow
