@@ -63,7 +63,7 @@ jobs:
         run: |
             dotnet tool restore
             dotnet restore
-            dotnet test -c Debug --filter OS!=Windows --logger trx;LogFileName=test_results.trx /p:CollectCoverage=true /p:CoverletOutput=./TestResults/coverage.info /p:CoverletOutputFormat=cobertura
+            dotnet test -c Debug --filter OS!=Windows --logger "trx;LogFileName=test_results.trx" /p:CollectCoverage=true /p:CoverletOutput=./TestResults/coverage.info /p:CoverletOutputFormat=cobertura
 
       - name: Consolidate code coverage
         run: |
