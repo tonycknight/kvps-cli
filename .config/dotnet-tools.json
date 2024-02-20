@@ -8,26 +8,20 @@
         "paket"
       ]
     },
-    "fake-cli": {
-      "version": "6.0.0",
-      "commands": [
-        "fake"
-      ]
-    },
     "dotnet-reportgenerator-globaltool": {
-      "version": "5.2.0",
+      "version": "5.2.1",
       "commands": [
         "reportgenerator"
       ]
     },
     "fantomas": {
-      "version": "5.2.2",
+      "version": "6.2.3",
       "commands": [
         "fantomas"
       ]
     },
     "pkgchk-cli": {
-      "version": "0.1.68",
+      "version": "0.2.350",
       "commands": [
         "pkgchk"
       ]

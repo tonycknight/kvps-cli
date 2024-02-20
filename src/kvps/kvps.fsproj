@@ -14,6 +14,8 @@
     <RepositoryUrl>https://github.com/tonycknight/kvps-cli</RepositoryUrl>
     <PackageId>kvps-cli</PackageId>
     <PackageProjectUrl>https://github.com/tonycknight/kvps-cli</PackageProjectUrl>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
   </PropertyGroup>
   <ItemGroup>
     <None Include="paket.references" />
@@ -27,9 +29,10 @@
     <Compile Include="KeyValues\IKeyValueRepository.fs" />
     <Compile Include="KeyValues\LiteDbKeyValueRepository.fs" />
     <Compile Include="Rendering.fs" />
-    <Compile Include="NugetClient.fs" />
+    <Compile Include="Nuget.fs" />
     <Compile Include="Commands.fs" />
     <Compile Include="Program.fs" />
+    <None Include="../../README.md" Pack="true" PackagePath="\"/>
   </ItemGroup>
   <Import Project="..\..\.paket\Paket.Restore.targets" />
 </Project>

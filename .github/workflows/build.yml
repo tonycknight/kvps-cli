@@ -18,61 +18,66 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Setup .NET Core SDK
-        uses: actions/setup-dotnet@v3
+        uses: actions/setup-dotnet@v4
         with:
           dotnet-version: "${{ env.dotnet_version }}"
                       
       - name: SCA checks
         run: |
             dotnet tool restore
-            dotnet run --project ./build/build.fsproj -t "SCA"
+            dotnet pkgchk --vulnerable --deprecated --transitive            
 
   style-checks:
     name: Style Checks
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Setup .NET Core SDK
-        uses: actions/setup-dotnet@v3
+        uses: actions/setup-dotnet@v4
         with:
           dotnet-version: "${{ env.dotnet_version }}"
                       
       - name: Style checks
         run: |
             dotnet tool restore
-            dotnet run --project ./build/build.fsproj -t "Check Style Rules"
+            dotnet fantomas --recurse --check ./src/ ./tests/
 
   tests:
     name: Test
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Setup .NET Core SDK
-        uses: actions/setup-dotnet@v3
+        uses: actions/setup-dotnet@v4
         with:
           dotnet-version: "${{ env.dotnet_version }}"
           
       - name: Run tests
         run: |
             dotnet tool restore
-            dotnet run --project ./build/build.fsproj -t "Tests"
+            dotnet restore
+            dotnet test -c Debug --filter OS!=Windows --logger "trx;LogFileName=test_results.trx" /p:CollectCoverage=true /p:CoverletOutput=./TestResults/coverage.info /p:CoverletOutputFormat=cobertura
+
+      - name: Consolidate code coverage
+        run: |
+          dotnet reportgenerator -reports:./tests/**/coverage.info -targetdir:./publish/codecoverage -reporttypes:Html
 
       - name: Archive Test results
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: tests.results
           path: |
             ./tests/**/TestResults/*
       
       - name: Archive Code coverage
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: codecoverage
           path: ./publish/codecoverage/*.*
@@ -105,20 +110,27 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Setup .NET Core SDK
-        uses: actions/setup-dotnet@v3
+        uses: actions/setup-dotnet@v4
         with:
           dotnet-version: "${{ env.dotnet_version }}"
-          
+
+      - name: Set Build version
+        if: github.ref != 'refs/heads/main'
+        run: |
+          echo "build-version-number=${{ env.build-version-number }}-preview" >> $GITHUB_ENV
+
       - name: Build
         run: |
             dotnet tool restore
-            dotnet run --project ./build/build.fsproj -t "Build"
+            dotnet restore
+            dotnet pack ./src/kvps/kvps.fsproj -c Release -o ./package /p:PackageVersion=${{ env.build-version-number }} /p:Version=${{ env.build-version-number }} /p:AssemblyInformationalVersion=${{ env.build-version-number }}
+            
 
       - name: Archive tool nupkg
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: kvps-cli.nupkg
           path: ./package/kvps*.nupkg
@@ -131,15 +143,15 @@ jobs:
     if: github.event_name == 'push'
     
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Setup .NET Core SDK
-        uses: actions/setup-dotnet@v3
+        uses: actions/setup-dotnet@v4
         with:
           dotnet-version: "${{ env.dotnet_version }}"
 
       - name: Download package
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: kvps-cli.nupkg
           path: ${{ github.workspace }}/artifacts
@@ -154,7 +166,7 @@ jobs:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
 
     steps:    
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Create Release
         uses: ncipollo/release-action@v1

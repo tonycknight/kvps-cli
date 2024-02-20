@@ -12,7 +12,6 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "build", "build", "{DBAC85E8-3274-4821-B8E6-D35B7709CDFF}"
 	ProjectSection(SolutionItems) = preProject
 		.editorconfig = .editorconfig
-		build.ps1 = build.ps1
 		.github\workflows\build.yml = .github\workflows\build.yml
 		paket.dependencies = paket.dependencies
 	EndProjectSection
@@ -23,8 +22,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docs", "docs", "{CE965ADE-8
 	ProjectSection(SolutionItems) = preProject
 		README.md = README.md
 	EndProjectSection
-EndProject
-Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "build", "build\build.fsproj", "{8D030C84-8900-4FC8-BF66-75CABEFD1F18}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -40,10 +37,6 @@ Global
 		{957A1FFF-058A-40A0-91E7-6FCD39E8E31B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{957A1FFF-058A-40A0-91E7-6FCD39E8E31B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{957A1FFF-058A-40A0-91E7-6FCD39E8E31B}.Release|Any CPU.Build.0 = Release|Any CPU
-		{8D030C84-8900-4FC8-BF66-75CABEFD1F18}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{8D030C84-8900-4FC8-BF66-75CABEFD1F18}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{8D030C84-8900-4FC8-BF66-75CABEFD1F18}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{8D030C84-8900-4FC8-BF66-75CABEFD1F18}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -51,7 +44,6 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{F10187BC-73C1-4051-82A6-35E8BF6C79FF} = {067339C5-C6B7-4B9D-9B3C-12811969A560}
 		{957A1FFF-058A-40A0-91E7-6FCD39E8E31B} = {77D53C87-6159-4EE6-A596-79341406FAC7}
-		{8D030C84-8900-4FC8-BF66-75CABEFD1F18} = {DBAC85E8-3274-4821-B8E6-D35B7709CDFF}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {72289A03-1851-4478-BBC1-A7C2EF9970C9}
