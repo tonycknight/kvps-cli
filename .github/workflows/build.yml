@@ -28,7 +28,7 @@ jobs:
       - name: SCA checks
         run: |
             dotnet tool restore
-            dotnet run --project ./build/build.fsproj -t "SCA"
+            pkgchk --vulnerable --deprecated --transitive            
 
   style-checks:
     name: Style Checks
@@ -45,7 +45,7 @@ jobs:
       - name: Style checks
         run: |
             dotnet tool restore
-            dotnet run --project ./build/build.fsproj -t "Check Style Rules"
+            dotnet fantomas --recurse --check ./src/ ./tests/
 
   tests:
     name: Test
@@ -62,7 +62,12 @@ jobs:
       - name: Run tests
         run: |
             dotnet tool restore
-            dotnet run --project ./build/build.fsproj -t "Tests"
+            dotnet restore
+            dotnet test -c Debug --filter OS!=Windows --logger trx;LogFileName=test_results.trx /p:CollectCoverage=true /p:CoverletOutput=./TestResults/coverage.info /p:CoverletOutputFormat=cobertura
+
+      - name: Consolidate code coverage
+        run: |
+          dotnet reportgenerator -reports:./tests/**/coverage.info -targetdir:./publish/codecoverage -reporttypes:Html
 
       - name: Archive Test results
         uses: actions/upload-artifact@v3
@@ -111,11 +116,18 @@ jobs:
         uses: actions/setup-dotnet@v3
         with:
           dotnet-version: "${{ env.dotnet_version }}"
-          
+
+      - name: Set Build version
+        if: github.ref != 'refs/heads/main'
+        run: |
+          echo "build-version-number=${{ env.dotnet_version }} >> $GITHUB_ENV"
+
       - name: Build
         run: |
             dotnet tool restore
-            dotnet run --project ./build/build.fsproj -t "Build"
+            dotnet restore
+            dotnet pack ./src/kvps/kvps.fsproj -c Release -o ./package /p:PackageVersion=${{ env.build-version-number }} /p:Version=${{ env.build-version-number }} /p:AssemblyInformationalVersion=${{ env.build-version-number }}
+            
 
       - name: Archive tool nupkg
         uses: actions/upload-artifact@v3
