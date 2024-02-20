@@ -28,29 +28,14 @@ module ProgramBootstrap =
         let attrs = getAsm () |> getAttrs
         let copyright = getCopyrightValue attrs
         let vsn = getVersionValue attrs
-
-        let currentVersion =
-            match vsn with
-            | Some vsn ->
-                // Trim versions that are suffixed with a commit hash.
-                let vsn =
-                    match vsn.IndexOf('+') with
-                    | x when x >= 0 -> vsn.Substring(0, x)
-                    | _ -> vsn
-
-                new System.Version(vsn)
-            | None -> new System.Version()
-
-        let nugetLatest = NugetClient.getLatestVersion ()
-
-        let nugetInfo =
-            if nugetLatest > currentVersion then
-                sprintf "An upgrade is available: %A" nugetLatest |> Some
-            else
-                None
-
+        
+        let nugetInfo =            
+            vsn 
+            |> Option.bind Nuget.getUpgradeVersion 
+            |> Option.map (sprintf "An upgrade is available: %s")
+            
         let header =
-            [ "kvps-cli" |> Strings.magenta
+            [ Nuget.packageId |> Strings.magenta
               "A key/value pair management tool" |> Strings.yellow
               "" ]
 
@@ -60,7 +45,7 @@ module ProgramBootstrap =
                   let v = v |> sprintf "Version %s" |> Strings.yellow
                   let beta = Strings.cyan "beta"
                   sprintf "%s %s" v beta)
-              nugetInfo |> Option.map Strings.yellow
+              nugetInfo |> Option.map Strings.green
               copyright |> Option.map Strings.yellow ]
             |> Seq.flattenSomes
             |> List.ofSeq

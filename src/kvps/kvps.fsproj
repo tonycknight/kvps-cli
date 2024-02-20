@@ -27,7 +27,7 @@
     <Compile Include="KeyValues\IKeyValueRepository.fs" />
     <Compile Include="KeyValues\LiteDbKeyValueRepository.fs" />
     <Compile Include="Rendering.fs" />
-    <Compile Include="NugetClient.fs" />
+    <Compile Include="Nuget.fs" />
     <Compile Include="Commands.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>

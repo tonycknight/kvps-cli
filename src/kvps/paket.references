@@ -4,3 +4,4 @@ crayon
 Microsoft.Extensions.DependencyInjection
 LiteDB
 NuGet.Protocol
+Tk.Nuget
