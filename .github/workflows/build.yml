@@ -120,7 +120,7 @@ jobs:
       - name: Set Build version
         if: github.ref != 'refs/heads/main'
         run: |
-          echo "build-version-number=${{ env.dotnet_version }}-preview >> $GITHUB_ENV"
+          echo "build-version-number=${{ env.build-version-number }}-preview >> $GITHUB_ENV"
 
       - name: Build
         run: |
