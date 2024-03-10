@@ -19,16 +19,12 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
-
-      - name: Setup .NET Core SDK
-        uses: actions/setup-dotnet@v4
-        with:
-          dotnet-version: "${{ env.dotnet_version }}"
                       
-      - name: SCA checks
-        run: |
-            dotnet tool restore
-            dotnet pkgchk --vulnerable --deprecated --transitive            
+      - name: Run SCA
+        uses: tonycknight/pkgchk-action@v1.0.14
+        with:
+          trace: true
+
 
   style-checks:
     name: Style Checks
