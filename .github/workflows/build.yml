@@ -19,14 +19,9 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
-
-      #- name: Setup .NET Core SDK
-      #  uses: actions/setup-dotnet@v4
-      #  with:
-      #    dotnet-version: "${{ env.dotnet_version }}"
                       
       - name: Run SCA
-        uses: tonycknight/pkgchk-action@v1.0.13
+        uses: tonycknight/pkgchk-action@v1.0.14
         with:
           trace: true
 
