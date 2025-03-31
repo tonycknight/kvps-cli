@@ -28,9 +28,6 @@ jobs:
                       
       - name: Run SCA
         uses: tonycknight/pkgchk-action@v1.0.20
-        with:
-          trace: true
-
 
   style-checks:
     name: Style Checks

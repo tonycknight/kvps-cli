@@ -29,4 +29,3 @@ jobs:
 
       - name: Run SCA
         uses: tonycknight/pkgchk-action@v1.0.20
- 
