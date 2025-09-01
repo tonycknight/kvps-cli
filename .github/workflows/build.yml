@@ -24,17 +24,17 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
                       
       - name: Run SCA
-        uses: tonycknight/pkgchk-action@v1.0.22
+        uses: tonycknight/pkgchk-action@v1
 
   style-checks:
     name: Style Checks
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Setup .NET Core SDK
         uses: actions/setup-dotnet@v4
@@ -51,7 +51,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Setup .NET Core SDK
         uses: actions/setup-dotnet@v4
@@ -109,7 +109,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Setup .NET Core SDK
         uses: actions/setup-dotnet@v4
@@ -139,10 +139,10 @@ jobs:
     name: Nuget release
     runs-on: ubuntu-latest
     needs:   [ sca, build, style-checks, tests ]
-    if: github.event_name == 'push'
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Setup .NET Core SDK
         uses: actions/setup-dotnet@v4
@@ -150,7 +150,7 @@ jobs:
           dotnet-version: "${{ env.dotnet_version }}"
 
       - name: Download package
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v5
         with:
           name: kvps-cli.nupkg
           path: ${{ github.workspace }}/artifacts
@@ -165,7 +165,7 @@ jobs:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
 
     steps:    
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Create Release
         uses: ncipollo/release-action@v1
