@@ -3,21 +3,21 @@
   "isRoot": true,
   "tools": {
     "paket": {
-      "version": "8.0.0",
+      "version": "9.0.2",
       "commands": [
         "paket"
       ],
       "rollForward": false
     },
     "dotnet-reportgenerator-globaltool": {
-      "version": "5.2.1",
+      "version": "5.4.12",
       "commands": [
         "reportgenerator"
       ],
       "rollForward": false
     },
     "fantomas": {
-      "version": "6.2.3",
+      "version": "7.0.3",
       "commands": [
         "fantomas"
       ],
