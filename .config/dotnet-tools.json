@@ -2,13 +2,6 @@
   "version": 1,
   "isRoot": true,
   "tools": {
-    "paket": {
-      "version": "9.0.2",
-      "commands": [
-        "paket"
-      ],
-      "rollForward": false
-    },
     "dotnet-reportgenerator-globaltool": {
       "version": "5.5.1",
       "commands": [
