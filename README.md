@@ -88,6 +88,12 @@ Return only the key's value without metadata, with the value unmasked:
 dotnet kvps get <KEY> -vo -r
 ```
 
+Copy the value to the clipboard:
+
+```
+dotnet kvps get <KEY> -c
+```
+
 
 
 ## Delete a key
