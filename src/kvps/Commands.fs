@@ -122,17 +122,16 @@ module Commands =
                         | true -> [ renderValue kv ]
                     | _ -> []
 
-                let clipboard = // TODO: windows?
-                    match (v,copyClipboard.HasValue()) with
-                    | (None,_)
-                    | (Some _, false) -> ""
-                    | (Some kv, true) -> kv.value
                         
                 Console.writeLines msg
 
-                if clipboard <> "" then
-                    Clipboard.set clipboard
-
+                match (v,copyClipboard.HasValue()) with
+                | (None,_)
+                | (Some _, false) -> ignore 0
+                | (Some kv, true) -> 
+                    Clipboard.set kv.value
+                    Console.writeLine "Copied to clipboard."
+                
                 return true |> Bool.toRc
             }
 
