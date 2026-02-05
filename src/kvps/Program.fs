@@ -73,11 +73,11 @@ module Program =
 
       let sp = ProgramBootstrap.serviceCollection ()
 
-      app.Command("set", Commands.setValueCmd sp) |> ignore
-      app.Command("get", Commands.getValueCmd sp) |> ignore
-      app.Command("del", Commands.deleteKeyCmd sp) |> ignore
-      app.Command("list", Commands.listKeysCmd sp) |> ignore
-      app.Command("db", Commands.dbCmd sp) |> ignore
+      app.Command("set", Commands.Application.setValueCmd sp) |> ignore
+      app.Command("get", Commands.Application.getValueCmd sp) |> ignore
+      app.Command("del", Commands.Application.deleteKeyCmd sp) |> ignore
+      app.Command("list", Commands.Application.listKeysCmd sp) |> ignore
+      app.Command("db", Commands.Application.dbCmd sp) |> ignore
 
       app.OnExecute(fun () -> app.ShowHelp())
 

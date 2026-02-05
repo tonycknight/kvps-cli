@@ -31,8 +31,8 @@
     <Compile Include="KeyValues\LiteDbKeyValueRepository.fs" />
     <Compile Include="Rendering.fs" />
     <Compile Include="Nuget.fs" />
-    <Compile Include="Commands\DatabaseCommands.fs" />
-    <Compile Include="Commands\Commands.fs" />
+    <Compile Include="Commands\Database.fs" />
+    <Compile Include="Commands\Application.fs" />
     <Compile Include="Program.fs" />
     <None Include="../../README.md" Pack="true" PackagePath="\" />
   </ItemGroup>

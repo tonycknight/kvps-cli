@@ -1,10 +1,12 @@
-﻿namespace kvps
+﻿namespace kvps.Commands
 
 open McMaster.Extensions.CommandLineUtils
 open Microsoft.Extensions.DependencyInjection
+open kvps
 open kvps.KeyValues
 
-module Commands =
+[<AutoOpen>]
+module Application =
 
   let private descr description (cla: CommandLineApplication) =
     cla.Description <- description
@@ -182,7 +184,7 @@ module Commands =
       (fun a ->
         a |> descr "Show current DB details." |> ignore
 
-        let exec (cts) = DatabaseCommands.show (repo sp)
+        let exec (cts) = Commands.Database.show (repo sp)
 
         a.OnExecuteAsync(exec))
     )
@@ -195,7 +197,8 @@ module Commands =
 
         let name = nameArg a
 
-        let exec (cts) = DatabaseCommands.set (configRepo sp) (repo sp) name
+        let exec (cts) =
+          Commands.Database.set (configRepo sp) (repo sp) name
 
         a.OnExecuteAsync(exec))
     )
@@ -209,7 +212,7 @@ module Commands =
         let fileName = fileNameArg a
 
         let exec (cts) =
-          DatabaseCommands.export (repo sp) fileName
+          Commands.Database.export (repo sp) fileName
 
         a.OnExecuteAsync(exec))
     )
@@ -223,7 +226,7 @@ module Commands =
         let fileName = fileNameArg a
 
         let exec (cts) =
-          DatabaseCommands.import (repo sp) fileName
+          Commands.Database.import (repo sp) fileName
 
         a.OnExecuteAsync(exec))
     )

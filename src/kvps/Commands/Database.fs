@@ -1,10 +1,11 @@
-namespace kvps
+namespace kvps.Commands
 
 open System
 open McMaster.Extensions.CommandLineUtils
+open kvps
 open kvps.KeyValues
 
-module DatabaseCommands =
+module Database =
 
   let show (repo: IKeyValueRepository) =
     task {
