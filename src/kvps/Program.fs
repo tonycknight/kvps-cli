@@ -40,11 +40,7 @@ module ProgramBootstrap =
               "" ]
 
         let meta =
-            [ vsn
-              |> Option.map (fun v ->
-                  let v = v |> sprintf "Version %s" |> Strings.yellow
-                  let beta = Strings.cyan "beta"
-                  sprintf "%s %s" v beta)
+            [ vsn |> Option.map (sprintf "Version %s" >> Strings.yellow)
               nugetInfo |> Option.map Strings.green
               copyright |> Option.map Strings.yellow ]
             |> Seq.flattenSomes
