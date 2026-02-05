@@ -63,7 +63,7 @@ module Commands =
         opt
 
     let private copyToClipboardOption (cla: CommandLineApplication) =
-        let opt = cla.Option("-clip", "Copy to the clipboard.", CommandOptionType.NoValue)
+        let opt = cla.Option("-c", "Copy to the clipboard.", CommandOptionType.NoValue)
         opt.LongName <- "clipboard"
         opt
 
