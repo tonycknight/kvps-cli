@@ -112,22 +112,7 @@ module Application =
 
     let tags = tagsOption cla
 
-    let exec (cts) =
-      task {
-        let kvRepo = repo sp
-
-        let! kvs =
-          tags.Values
-          |> Strings.trimSeq
-          |> Seq.distinct
-          |> Array.ofSeq
-          |> kvRepo.ListKeysAsync
-
-        if kvs.Length > 0 then
-          kvs |> Rendering.renderKvList |> Console.writeLines
-
-        return true |> Bool.toRc
-      }
+    let exec (cts) = Commands.KeyValues.listKeys (repo sp) tags
 
     cla.OnExecuteAsync(exec)
 

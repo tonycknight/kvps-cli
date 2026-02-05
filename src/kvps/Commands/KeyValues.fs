@@ -54,3 +54,17 @@ module KeyValues =
       return r |> Bool.toRc
     }
 
+  let listKeys (repo: IKeyValueRepository) (tags: CommandOption) =
+    task {
+      let! kvs =
+          tags.Values
+          |> Strings.trimSeq
+          |> Seq.distinct
+          |> Array.ofSeq
+          |> repo.ListKeysAsync
+
+      if kvs.Length > 0 then
+        kvs |> Rendering.renderKvList |> Console.writeLines
+
+      return true |> Bool.toRc
+    }
