@@ -9,15 +9,14 @@ permissions: # set permissions to principle of least privilege, codeql requires 
 
 on:
   push:
-  pull_request:
-    branches: [ main ]
+    branches: [ "**" ]
+    tags: [ "**" ]
+  merge_group:
   workflow_dispatch:
 
 env:
   build-version-number: 0.1.${{ github.run_number }}  
-  dotnet_version: 8.x
-
-
+  
 jobs:
   sca:
     name: SCA
@@ -38,8 +37,6 @@ jobs:
 
       - name: Setup .NET Core SDK
         uses: actions/setup-dotnet@v5
-        with:
-          dotnet-version: "${{ env.dotnet_version }}"
                       
       - name: Style checks
         run: |
@@ -55,9 +52,7 @@ jobs:
 
       - name: Setup .NET Core SDK
         uses: actions/setup-dotnet@v5
-        with:
-          dotnet-version: "${{ env.dotnet_version }}"
-          
+                  
       - name: Run tests
         run: |
             dotnet tool restore
@@ -113,9 +108,7 @@ jobs:
 
       - name: Setup .NET Core SDK
         uses: actions/setup-dotnet@v5
-        with:
-          dotnet-version: "${{ env.dotnet_version }}"
-
+        
       - name: Set Build version
         if: github.ref != 'refs/heads/main'
         run: |
@@ -146,9 +139,7 @@ jobs:
 
       - name: Setup .NET Core SDK
         uses: actions/setup-dotnet@v5
-        with:
-          dotnet-version: "${{ env.dotnet_version }}"
-
+        
       - name: Download package
         uses: actions/download-artifact@v7
         with:
