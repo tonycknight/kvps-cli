@@ -103,13 +103,7 @@ module Application =
 
     let key = keyArg cla
 
-    let exec (cts) =
-      task {
-        let kvRepo = repo sp
-        let! r = key.Value |> Strings.trim |> kvRepo.DeleteKeyAsync
-
-        return r |> Bool.toRc
-      }
+    let exec (cts) = Commands.KeyValues.deleteKey (repo sp) key
 
     cla.OnExecuteAsync(exec)
 

@@ -46,3 +46,11 @@ module KeyValues =
       return true |> Bool.toRc
 
     }
+
+  let deleteKey (repo: IKeyValueRepository) (key: CommandArgument) = 
+    task {
+      let! r = key.Value |> Strings.trim |> repo.DeleteKeyAsync
+
+      return r |> Bool.toRc
+    }
+
