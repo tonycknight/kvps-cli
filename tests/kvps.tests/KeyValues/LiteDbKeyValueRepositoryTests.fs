@@ -9,222 +9,237 @@ open Xunit
 
 module LiteDbKeyValueRepositoryTests =
 
-    let private config dbName =
-        let s = Substitute.For<kvps.Config.IConfigProvider>()
+  let private config dbName =
+    let s = Substitute.For<kvps.Config.IConfigProvider>()
 
-        let c =
-            { kvps.Config.Configuration.Default with
-                dbName = dbName }
+    let c =
+      { kvps.Config.Configuration.Default with
+          dbName = dbName
+      }
 
-        s.Get().Returns(c) |> ignore
-        s
+    s.Get().Returns(c) |> ignore
+    s
 
-    let private repo config =
-        new LiteDbKeyValueRepository(config) :> IKeyValueRepository
+  let private repo config =
+    new LiteDbKeyValueRepository(config) :> IKeyValueRepository
 
-    [<Fact>]
-    let ``ctor smoke`` () =
-        let config = config "test"
-        let repo = repo config
+  [<Fact>]
+  let ``ctor smoke`` () =
+    let config = config "test"
+    let repo = repo config
 
-        repo |> should not' (equal null)
+    repo |> should not' (equal null)
 
-    [<Fact>]
-    let ``set and get are symmetric`` () =
-        task {
-            let config = Guid.NewGuid().ToString() |> config
+  [<Fact>]
+  let ``set and get are symmetric`` () =
+    task {
+      let config = Guid.NewGuid().ToString() |> config
 
-            let repo = repo config
+      let repo = repo config
 
-            let kv =
-                { KeyValue.key = "aaa"
-                  value = "bbb"
-                  isSecret = false
-                  tags = [||] }
-
-            let! r1 = repo.SetValueAsync kv
-
-            let! r2 = repo.GetValueAsync kv.key
-
-            r2 |> should equal (Some kv)
-
-            return true
+      let kv =
+        {
+          KeyValue.key = "aaa"
+          value = "bbb"
+          isSecret = false
+          tags = [||]
         }
 
-    [<Fact>]
-    let ``set can change tags`` () =
-        task {
-            let config = Guid.NewGuid().ToString() |> config
+      let! r1 = repo.SetValueAsync kv
 
-            let repo = repo config
+      let! r2 = repo.GetValueAsync kv.key
 
-            let tags1 = [| 1..3 |] |> Array.map (fun x -> x.ToString())
+      r2 |> should equal (Some kv)
 
-            let kv =
-                { KeyValue.key = "aaa"
-                  value = "bbb"
-                  isSecret = false
-                  tags = tags1 }
+      return true
+    }
 
-            let! r1 = repo.SetValueAsync kv
+  [<Fact>]
+  let ``set can change tags`` () =
+    task {
+      let config = Guid.NewGuid().ToString() |> config
 
-            let tags2 = [| 3..6 |] |> Array.map (fun x -> x.ToString())
-            let kv2 = { kv with tags = tags2 }
+      let repo = repo config
 
-            let! r2 = repo.SetValueAsync kv2
+      let tags1 = [| 1..3 |] |> Array.map (fun x -> x.ToString())
 
-            let! r3 = repo.GetValueAsync kv.key
-
-            r3 |> should equal (Some kv2)
-
-            return true
+      let kv =
+        {
+          KeyValue.key = "aaa"
+          value = "bbb"
+          isSecret = false
+          tags = tags1
         }
 
-    [<Fact>]
-    let ``set can retain tags`` () =
-        task {
-            let config = Guid.NewGuid().ToString() |> config
+      let! r1 = repo.SetValueAsync kv
 
-            let repo = repo config
+      let tags2 = [| 3..6 |] |> Array.map (fun x -> x.ToString())
+      let kv2 = { kv with tags = tags2 }
 
-            let tags = [| 1..3 |] |> Array.map (fun x -> x.ToString())
+      let! r2 = repo.SetValueAsync kv2
 
-            let kv =
-                { KeyValue.key = "aaa"
-                  value = "bbb"
-                  isSecret = false
-                  tags = tags }
+      let! r3 = repo.GetValueAsync kv.key
 
-            let! r1 = repo.SetValueAsync kv
+      r3 |> should equal (Some kv2)
 
-            let kv2 = { kv with tags = [||] }
+      return true
+    }
 
-            let! r2 = repo.SetValueAsync kv2
+  [<Fact>]
+  let ``set can retain tags`` () =
+    task {
+      let config = Guid.NewGuid().ToString() |> config
 
-            let! r3 = repo.GetValueAsync kv.key
+      let repo = repo config
 
-            r3 |> should equal (Some kv)
+      let tags = [| 1..3 |] |> Array.map (fun x -> x.ToString())
 
-            return true
+      let kv =
+        {
+          KeyValue.key = "aaa"
+          value = "bbb"
+          isSecret = false
+          tags = tags
         }
 
-    [<Fact>]
-    let ``list yields all`` () =
-        task {
-            let config = Guid.NewGuid().ToString() |> config
+      let! r1 = repo.SetValueAsync kv
 
-            let repo = repo config
+      let kv2 = { kv with tags = [||] }
 
-            let kvs =
-                [ 1..3 ]
-                |> Seq.map (fun x ->
-                    { KeyValue.key = sprintf "aaa%i" x
-                      value = "bbb"
-                      isSecret = false
-                      tags = [||] })
-                |> Array.ofSeq
+      let! r2 = repo.SetValueAsync kv2
 
-            kvs
-            |> Array.iter (fun kv -> (repo.SetValueAsync kv).GetAwaiter().GetResult() |> ignore)
+      let! r3 = repo.GetValueAsync kv.key
 
-            let! r2 = repo.ListKeysAsync [||]
+      r3 |> should equal (Some kv)
 
-            r2 |> should haveLength kvs.Length
-            r2 |> should equal kvs
+      return true
+    }
 
-            return true
-        }
+  [<Fact>]
+  let ``list yields all`` () =
+    task {
+      let config = Guid.NewGuid().ToString() |> config
 
-    [<Fact>]
-    let ``list by tag yields only tagged`` () =
-        task {
-            let maxCount = 3
-            let config = Guid.NewGuid().ToString() |> config
+      let repo = repo config
 
-            let repo = repo config
+      let kvs =
+        [ 1..3 ]
+        |> Seq.map (fun x ->
+          {
+            KeyValue.key = sprintf "aaa%i" x
+            value = "bbb"
+            isSecret = false
+            tags = [||]
+          })
+        |> Array.ofSeq
 
-            let kvs =
-                [ 1..maxCount ]
-                |> Seq.map (fun x ->
-                    { KeyValue.key = sprintf "aaa%i" x
-                      value = "bbb"
-                      isSecret = false
-                      tags = [| x.ToString() |] })
-                |> Array.ofSeq
+      kvs
+      |> Array.iter (fun kv -> (repo.SetValueAsync kv).GetAwaiter().GetResult() |> ignore)
 
-            kvs
-            |> Array.iter (fun kv -> (repo.SetValueAsync kv).GetAwaiter().GetResult() |> ignore)
+      let! r2 = repo.ListKeysAsync [||]
 
-            let ts = [| 2..maxCount |] |> Array.map (fun x -> x.ToString())
+      r2 |> should haveLength kvs.Length
+      r2 |> should equal kvs
 
-            let expected =
-                kvs
-                |> Array.filter (fun kv -> kv.tags |> Seq.exists (fun t -> ts |> Array.contains t))
+      return true
+    }
 
-            let! r1 = repo.ListKeysAsync ts
+  [<Fact>]
+  let ``list by tag yields only tagged`` () =
+    task {
+      let maxCount = 3
+      let config = Guid.NewGuid().ToString() |> config
 
-            r1 |> should haveLength expected.Length
-            r1 |> should equal expected
+      let repo = repo config
 
-            return true
-        }
+      let kvs =
+        [ 1..maxCount ]
+        |> Seq.map (fun x ->
+          {
+            KeyValue.key = sprintf "aaa%i" x
+            value = "bbb"
+            isSecret = false
+            tags = [| x.ToString() |]
+          })
+        |> Array.ofSeq
 
-    [<Fact>]
-    let ``del removes items`` () =
-        task {
-            let config = Guid.NewGuid().ToString() |> config
+      kvs
+      |> Array.iter (fun kv -> (repo.SetValueAsync kv).GetAwaiter().GetResult() |> ignore)
 
-            let repo = repo config
+      let ts = [| 2..maxCount |] |> Array.map (fun x -> x.ToString())
 
-            let kvs =
-                [ 1..3 ]
-                |> Seq.map (fun x ->
-                    { KeyValue.key = sprintf "aaa%i" x
-                      value = "bbb"
-                      isSecret = false
-                      tags = [||] })
-                |> Array.ofSeq
+      let expected =
+        kvs
+        |> Array.filter (fun kv -> kv.tags |> Seq.exists (fun t -> ts |> Array.contains t))
 
-            kvs
-            |> Array.iter (fun kv -> (repo.SetValueAsync kv).GetAwaiter().GetResult() |> ignore)
+      let! r1 = repo.ListKeysAsync ts
 
-            let kv = kvs |> Array.skip 1 |> Array.head
+      r1 |> should haveLength expected.Length
+      r1 |> should equal expected
 
-            let! r1 = repo.DeleteKeyAsync kv.key
+      return true
+    }
 
-            let! r2 = repo.ListKeysAsync [||]
+  [<Fact>]
+  let ``del removes items`` () =
+    task {
+      let config = Guid.NewGuid().ToString() |> config
 
-            let expected = kvs |> Array.filter (fun k -> k <> kv)
-            r1 |> should equal true
-            expected |> should equal r2
+      let repo = repo config
 
-            return true
-        }
+      let kvs =
+        [ 1..3 ]
+        |> Seq.map (fun x ->
+          {
+            KeyValue.key = sprintf "aaa%i" x
+            value = "bbb"
+            isSecret = false
+            tags = [||]
+          })
+        |> Array.ofSeq
 
-    [<Fact>]
-    let ``fbinfo gives count`` () =
-        task {
-            let dbName = Guid.NewGuid().ToString()
-            let config = dbName |> config
+      kvs
+      |> Array.iter (fun kv -> (repo.SetValueAsync kv).GetAwaiter().GetResult() |> ignore)
 
-            let repo = repo config
+      let kv = kvs |> Array.skip 1 |> Array.head
 
-            let kvs =
-                [ 1..3 ]
-                |> Seq.map (fun x ->
-                    { KeyValue.key = sprintf "aaa%i" x
-                      value = "bbb"
-                      isSecret = false
-                      tags = [||] })
-                |> Array.ofSeq
+      let! r1 = repo.DeleteKeyAsync kv.key
 
-            kvs
-            |> Array.iter (fun kv -> (repo.SetValueAsync kv).GetAwaiter().GetResult() |> ignore)
+      let! r2 = repo.ListKeysAsync [||]
 
-            let! r2 = repo.GetDbInfoAsync()
+      let expected = kvs |> Array.filter (fun k -> k <> kv)
+      r1 |> should equal true
+      expected |> should equal r2
 
-            r2.kvCount |> should equal kvs.Length
-            r2.name |> should equal dbName
+      return true
+    }
 
-            return true
-        }
+  [<Fact>]
+  let ``fbinfo gives count`` () =
+    task {
+      let dbName = Guid.NewGuid().ToString()
+      let config = dbName |> config
+
+      let repo = repo config
+
+      let kvs =
+        [ 1..3 ]
+        |> Seq.map (fun x ->
+          {
+            KeyValue.key = sprintf "aaa%i" x
+            value = "bbb"
+            isSecret = false
+            tags = [||]
+          })
+        |> Array.ofSeq
+
+      kvs
+      |> Array.iter (fun kv -> (repo.SetValueAsync kv).GetAwaiter().GetResult() |> ignore)
+
+      let! r2 = repo.GetDbInfoAsync()
+
+      r2.kvCount |> should equal kvs.Length
+      r2.name |> should equal dbName
+
+      return true
+    }
