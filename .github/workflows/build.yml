@@ -9,15 +9,20 @@ permissions: # set permissions to principle of least privilege, codeql requires 
 
 on:
   push:
-  pull_request:
-    branches: [ main ]
+    branches: [ "**" ]
+    tags: [ "**" ]
+    paths-ignore:
+      - '.github/ISSUE_TEMPLATE/**'
+      - '.github/dependabot.yml'
+      - '.github/labeler.yml'
+      - '.github/CODEOWNERS'
+      - '**/*.md'
+  merge_group:
   workflow_dispatch:
 
 env:
-  build-version-number: 0.1.${{ github.run_number }}  
-  dotnet_version: 8.x
-
-
+  package-version-number: 0.1.${{ github.run_number }}  
+  
 jobs:
   sca:
     name: SCA
@@ -28,23 +33,10 @@ jobs:
                       
       - name: Run SCA
         uses: tonycknight/pkgchk-action@v1
-
-  style-checks:
-    name: Style Checks
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v6
-
-      - name: Setup .NET Core SDK
-        uses: actions/setup-dotnet@v5
-        with:
-          dotnet-version: "${{ env.dotnet_version }}"
-                      
-      - name: Style checks
-        run: |
-            dotnet tool restore
-            dotnet fantomas --recurse --check ./src/ ./tests/
+        with: 
+          scan-issues: true
+          scan-upgrades: true
+          config: pkgchk.config.yml
 
   tests:
     name: Test
@@ -55,18 +47,16 @@ jobs:
 
       - name: Setup .NET Core SDK
         uses: actions/setup-dotnet@v5
-        with:
-          dotnet-version: "${{ env.dotnet_version }}"
-          
+                  
       - name: Run tests
         run: |
-            dotnet tool restore
-            dotnet restore
-            dotnet test -c Debug --filter OS!=Windows --logger "trx;LogFileName=test_results.trx" /p:CollectCoverage=true /p:CoverletOutput=./TestResults/coverage.info /p:CoverletOutputFormat=cobertura
+          dotnet tool restore
+          dotnet restore
+          dotnet test -c Debug --filter OS!=Windows --logger "trx;LogFileName=test_results.trx" /p:CollectCoverage=true /p:CoverletOutput=./TestResults/coverage.info /p:CoverletOutputFormat=cobertura
 
       - name: Consolidate code coverage
         run: |
-          dotnet reportgenerator -reports:./tests/**/coverage.info -targetdir:./publish/codecoverage -reporttypes:Html
+          dotnet reportgenerator -reports:./tests/**/coverage.net10.0.info -targetdir:./publish/codecoverage -reporttypes:Html
 
       - name: Archive Test results
         uses: actions/upload-artifact@v6
@@ -93,7 +83,7 @@ jobs:
       - name: Code coverage results
         uses: 5monkeys/cobertura-action@master
         with:
-          path: ${{ github.workspace }}/tests/kvps.tests/TestResults/coverage.info
+          path: ${{ github.workspace }}/tests/kvps.tests/TestResults/coverage.net10.0.info
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           minimum_coverage: 1
           fail_below_threshold: true
@@ -105,7 +95,7 @@ jobs:
           report_name: code coverage results
             
   build:
-    name: Build and Package
+    name: Build package
     runs-on: ubuntu-latest
 
     steps:
@@ -113,64 +103,44 @@ jobs:
 
       - name: Setup .NET Core SDK
         uses: actions/setup-dotnet@v5
-        with:
-          dotnet-version: "${{ env.dotnet_version }}"
-
+        
       - name: Set Build version
         if: github.ref != 'refs/heads/main'
         run: |
-          echo "build-version-number=${{ env.build-version-number }}-preview" >> $GITHUB_ENV
+          echo "package-version-number=${{ env.package-version-number }}-preview" >> $GITHUB_ENV
 
       - name: Build
         run: |
-            dotnet tool restore
-            dotnet restore
-            dotnet pack ./src/kvps/kvps.fsproj -c Release -o ./package /p:PackageVersion=${{ env.build-version-number }} /p:Version=${{ env.build-version-number }} /p:AssemblyInformationalVersion=${{ env.build-version-number }}
-            
-
-      - name: Archive tool nupkg
-        uses: actions/upload-artifact@v6
-        with:
-          name: kvps-cli.nupkg
-          path: ./package/kvps*.nupkg
-
+          dotnet tool restore
+          dotnet restore
+          dotnet pack ./src/kvps/kvps.fsproj -c Release -o ./package /p:PackageVersion=${{ env.package-version-number }} /p:Version=${{ env.package-version-number }} /p:AssemblyInformationalVersion=${{ env.package-version-number }}
   
   nuget-release:
-    name: Nuget release
+    name: Nuget package & release
     runs-on: ubuntu-latest
-    needs:   [ sca, build, style-checks, tests ]
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    needs:   [ sca, build, tests ]
+    if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/')
     
     steps:
       - uses: actions/checkout@v6
 
       - name: Setup .NET Core SDK
         uses: actions/setup-dotnet@v5
-        with:
-          dotnet-version: "${{ env.dotnet_version }}"
 
-      - name: Download package
-        uses: actions/download-artifact@v7
-        with:
-          name: kvps-cli.nupkg
-          path: ${{ github.workspace }}/artifacts
+      - name: Determine version
+        run: echo "package-version-number=$(git describe --tags --dirty)" >> $GITHUB_ENV
+
+      - name: Report version
+        run: echo "Building package ${{ env.package-version-number }}" >> $GITHUB_STEP_SUMMARY
+        
+      - name: Tool restore
+        run: |
+          dotnet tool restore
+          dotnet restore
+              
+      - name: Build package 
+        run: |
+          dotnet pack ./src/kvps/kvps.fsproj -c Release -o ./package /p:PackageVersion=${{ env.package-version-number }} /p:Version=${{ env.package-version-number }} /p:AssemblyInformationalVersion=${{ env.package-version-number }}
 
       - name: Push nuget package
-        run: dotnet nuget push "artifacts/*.nupkg"  --api-key ${{ secrets.NUGET_PAT }} --source "nuget.org"
-
-  gh-release:
-    name: GH release
-    runs-on: ubuntu-latest
-    needs: [ nuget-release ]    
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-
-    steps:    
-      - uses: actions/checkout@v6
-
-      - name: Create Release
-        uses: ncipollo/release-action@v1
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          tag: v${{ env.build-version-number }}
-          prerelease: false
-          generateReleaseNotes: true
+        run: dotnet nuget push "package/*.nupkg"  --api-key ${{ secrets.NUGET_PAT }} --source "nuget.org"

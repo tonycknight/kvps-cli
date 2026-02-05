@@ -1,0 +1,5 @@
+excludePackages:
+scanVulnerabilities: true
+scanDeprecations: true
+scanTransitives: true
+

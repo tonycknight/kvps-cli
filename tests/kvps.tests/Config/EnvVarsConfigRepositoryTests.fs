@@ -10,23 +10,23 @@ open Xunit
 [<ExcludeFromCodeCoverage>]
 module EnvVarsConfigRepositoryTests =
 
-    [<Fact>]
-    let ``Value() returns null value`` () =
-        let repo = new EnvVarsConfigRepository()
-        let name = Guid.NewGuid().ToString()
+  [<Fact>]
+  let ``Value() returns null value`` () =
+    let repo = new EnvVarsConfigRepository()
+    let name = Guid.NewGuid().ToString()
 
-        let r = (repo :> IConfigRepository).Value(name)
+    let r = (repo :> IConfigRepository).Value(name)
 
-        Object.ReferenceEquals(r, null) |> should be True
+    Object.ReferenceEquals(r, null) |> should be True
 
-    [<Fact>]
-    let ``Value() & Set() are symmetric`` () =
-        let repo = new EnvVarsConfigRepository() :> IConfigRepository
-        let name = Guid.NewGuid().ToString()
-        let value = Guid.NewGuid().ToString()
+  [<Fact>]
+  let ``Value() & Set() are symmetric`` () =
+    let repo = new EnvVarsConfigRepository() :> IConfigRepository
+    let name = Guid.NewGuid().ToString()
+    let value = Guid.NewGuid().ToString()
 
-        repo.Set(name, value)
+    repo.Set(name, value)
 
-        let r = repo.Value(name)
+    let r = repo.Value(name)
 
-        r |> should equal value
+    r |> should equal value

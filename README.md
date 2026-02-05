@@ -2,7 +2,7 @@
 
 [![Build & Release](https://github.com/tonycknight/kvps-cli/actions/workflows/build.yml/badge.svg)](https://github.com/tonycknight/kvps-cli/actions/workflows/build.yml)
 
-![Nuget](https://img.shields.io/nuget/v/kvps-cli)
+[![Nuget](https://img.shields.io/nuget/v/kvps-cli)](https://www.nuget.org/packages/kvps-cli/)
 
 A dotnet CLI tool for key value pair management.
 
@@ -12,9 +12,9 @@ A dotnet CLI tool for key value pair management.
 
 ## Dependenices
 
-You'll need the [.Net 8 runtime](https://dotnet.microsoft.com/en-us/download/dotnet/8.0) installed on your Windows machine.
+You'll need the [.Net 8 or .Net 10 runtime](https://dotnet.microsoft.com/en-us/download/dotnet) installed on your Windows machine.
 
-:warning: **This tool will not behave correctly under Linux or Mac OS.**
+Unfortunately this tool will not behave correctly under Linux or Mac OS.
 
 ## Installation
 
@@ -31,67 +31,69 @@ dotnet tool install kvps-cli -g
 ## Help:
 
 ```
-dotnet kvps
-``` 
-
-or if installed globally:
-
-```
 kvps -?
-```
-
-
+``` 
 
 ## Set a key value
 
 ```
-dotnet kvps set -?
+kvps set -?
 ```
 
 Set a key's value, with optional tags:
 
 ```
-dotnet kvps set <KEY> -v <value> -t <TAG1> -t <TAG2>
+kvps set <KEY> -v <value> -t <TAG1> -t <TAG2>
 ```
 
+Set a key's value as secret:
 
+```
+kvps set <KEY> -v <value> -s
+```
+
+Set a key's value as public (default):
+
+```
+kvps set <KEY> -v <value> -p
+```
 
 ## Get a key value
 
 Get help:
 
 ```
-dotnet kvps get -?
+kvps get -?
 ```
 
 Return the given key's value:
 
 ```
-dotnet kvps get <KEY>
+kvps get <KEY>
 ```
 
 Return only the key's value without metadata, with the value masked if it's not public:
 
 ```
-dotnet kvps get <KEY> -vo
+kvps get <KEY> -vo
 ```
 
 Reveal the key's value:
 
 ```
-dotnet kvps get <KEY> -r
+kvps get <KEY> -r
 ```
 
 Return only the key's value without metadata, with the value unmasked:
 
 ```
-dotnet kvps get <KEY> -vo -r
+kvps get <KEY> -vo -r
 ```
 
 Copy the value to the clipboard:
 
 ```
-dotnet kvps get <KEY> -c
+kvps get <KEY> -c
 ```
 
 
@@ -99,13 +101,13 @@ dotnet kvps get <KEY> -c
 ## Delete a key
 
 ```
-dotnet kvps del -?
+kvps del -?
 ```
 
 Delete a given key:
 
 ```
-dotnet kvps del <KEY>
+kvps del <KEY>
 ```
 
 
@@ -113,19 +115,19 @@ dotnet kvps del <KEY>
 ## List keys
 
 ```
-dotnet kvps  list -?
+kvps list -?
 ```
 
 Display all keys:
 
 ```
-dotnet kvps list
+kvps list
 ```
 
 Display all keys that match any of the given tags:
 
 ```
-dotnet kvps  list -t <TAG1> -t <TAG2>
+kvps  list -t <TAG1> -t <TAG2>
 ```
 
 ---
@@ -137,15 +139,17 @@ dotnet kvps  list -t <TAG1> -t <TAG2>
 Store a key's value:
 
 ```
-dotnet kvps set my_email_id -v joe@email.com
+kvps set my_email_id -v joe@email.com
 ```
 
 Later, extract the value:
 
 ```
-$email = dotnet kvps get my_email_id -vo -r
+$email = kvps get my_email_id -vo -r
 
-.\Get-Data.ps1 -Email $email
+
+$email
+joe@email.com
 ```
 
 ## Json objects
@@ -153,33 +157,59 @@ $email = dotnet kvps get my_email_id -vo -r
 Store some JSON:
 
 ```
-dotnet kvps set json_test -v "{ myTenantId: '1234abcd' }" -p
+kvps set json_test -v "{ myTenantId: '1234abcd' }" -p
 ```
 
 Extract:
 
 ```
-$v = dotnet kvps get json_test -vo -r 
-
-$j = $v | ConvertFrom-Json
-```
-
-or
-
-```
-$j = dotnet kvps get json_test -vo -r | ConvertFrom-Json
+$j = kvps get json_test -vo -r | ConvertFrom-Json
 
 $j.myTenantId
 ```
 
----
+## Database management
 
+```
+kvps db -?
+```
 
+### Export all key values
+
+:warning: **Although the database is encrypted, this will export all data in plain text JSON!**
+
+```
+kvps db export <FILENAME>
+```
+
+### Import key values
+
+```
+kvps db import <FILENAME>
+```
+
+### Switch databases
+
+Show the current database:
+
+```
+kvps db show
+```
+
+Use a different database:
+
+```
+kvps db set my_new_db
+```
+
+Switch back to the original:
+
+```
+kvps db set kvps
+```
 
 ---
 
 # Security
 
 :warning: **This tool is not a key vault equivalent!**
-
-

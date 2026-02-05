@@ -1,2 +1,29 @@
-[*.fs]
-fsharp_keep_max_number_of_blank_lines=1
+[*.{fs,fsx,fsi}]
+fsharp_keep_max_number_of_blank_lines = 1
+indent_size = 2
+max_line_length = 120
+fsharp_space_before_parameter = true
+fsharp_bar_before_discriminated_union_declaration = true
+fsharp_space_before_lowercase_invocation = true
+fsharp_space_before_uppercase_invocation = false
+fsharp_space_before_member = false
+fsharp_space_before_class_constructor = false
+fsharp_space_before_colon = false
+fsharp_space_after_comma = true
+fsharp_space_before_semicolon = false
+fsharp_space_after_semicolon = true
+fsharp_space_around_delimiter = true
+fsharp_max_if_then_short_width = 0
+fsharp_max_if_then_else_short_width = 60
+fsharp_max_infix_operator_expression = 80
+fsharp_max_record_width = 40
+fsharp_max_record_number_of_items = 1
+# character_width | number_of_items 
+fsharp_record_multiline_formatter = character_width
+fsharp_max_array_or_list_width = 80
+fsharp_max_array_or_list_number_of_items = 2
+# character_width | number_of_items 
+fsharp_array_or_list_multiline_formatter = character_width
+# cramped | aligned | stroustrup 
+fsharp_multiline_bracket_style = cramped
+fsharp_newline_before_multiline_computation_expression = true

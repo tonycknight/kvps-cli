@@ -1,6 +1,6 @@
 ﻿namespace kvps.Config
 
 type Configuration =
-    { dbName: string }
+  { dbName: string }
 
-    static member Default = { dbName = "kvps" }
+  static member Default = { dbName = "kvps" }
