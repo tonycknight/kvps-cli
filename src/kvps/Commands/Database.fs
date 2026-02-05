@@ -27,7 +27,7 @@ module Database =
       return true |> Bool.toRc
     }
 
-  let export (repo: IKeyValueRepository) (fileName: CommandArgument) =
+  let export (repo: IKeyValueRepository) (fileName: CommandArgument) (password: CommandOption) =
     task {
       let! kvs = repo.ListKeysAsync([||])
       let data = { KeyValueExport.empty with data = kvs }
@@ -40,7 +40,7 @@ module Database =
       return true |> Bool.toRc
     }
 
-  let import (repo: IKeyValueRepository) (fileName: CommandArgument) =
+  let import (repo: IKeyValueRepository) (fileName: CommandArgument) (password: CommandOption) =
     task {
       let js = fileName.Value |> Io.resolvePath |> Io.readFile
 

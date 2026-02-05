@@ -21,6 +21,13 @@ module Application =
   let private fileNameArg (cla: CommandLineApplication) =
     cla.Argument("<FILENAME>", "The file's name.", false).IsRequired()
 
+  let private passwordOption (cla: CommandLineApplication) =
+    let opt =
+      cla.Option("-pw", "The password to encrypt/decrypt.", CommandOptionType.SingleValue).IsRequired()
+
+    opt.LongName <- "password"
+    opt
+
   let private valueOption (cla: CommandLineApplication) =
     let opt =
       cla.Option("-v", "The key's value.", CommandOptionType.SingleValue).IsRequired()
@@ -150,9 +157,10 @@ module Application =
         a |> descr "Exports the DB contents to a file." |> ignore
 
         let fileName = fileNameArg a
+        let pw = passwordOption a
 
         let exec (cts) =
-          Commands.Database.export (repo sp) fileName
+          Commands.Database.export (repo sp) fileName pw
 
         a.OnExecuteAsync(exec))
     )
@@ -164,9 +172,10 @@ module Application =
         a |> descr "Imports data into the DB." |> ignore
 
         let fileName = fileNameArg a
+        let pw = passwordOption a
 
         let exec (cts) =
-          Commands.Database.import (repo sp) fileName
+          Commands.Database.import (repo sp) fileName pw
 
         a.OnExecuteAsync(exec))
     )
