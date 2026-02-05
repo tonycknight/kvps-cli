@@ -15,7 +15,7 @@ on:
   workflow_dispatch:
 
 env:
-  build-version-number: 0.1.${{ github.run_number }}  
+  package-version-number: 0.1.${{ github.run_number }}  
   
 jobs:
   sca:
@@ -101,13 +101,13 @@ jobs:
       - name: Set Build version
         if: github.ref != 'refs/heads/main'
         run: |
-          echo "build-version-number=${{ env.build-version-number }}-preview" >> $GITHUB_ENV
+          echo "package-version-number=${{ env.package-version-number }}-preview" >> $GITHUB_ENV
 
       - name: Build
         run: |
             dotnet tool restore
             dotnet restore
-            dotnet pack ./src/kvps/kvps.fsproj -c Release -o ./package /p:PackageVersion=${{ env.build-version-number }} /p:Version=${{ env.build-version-number }} /p:AssemblyInformationalVersion=${{ env.build-version-number }}
+            dotnet pack ./src/kvps/kvps.fsproj -c Release -o ./package /p:PackageVersion=${{ env.package-version-number }} /p:Version=${{ env.package-version-number }} /p:AssemblyInformationalVersion=${{ env.package-version-number }}
             
 
       - name: Archive tool nupkg
@@ -151,6 +151,6 @@ jobs:
         uses: ncipollo/release-action@v1
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          tag: v${{ env.build-version-number }}
+          tag: v${{ env.package-version-number }}
           prerelease: false
           generateReleaseNotes: true
