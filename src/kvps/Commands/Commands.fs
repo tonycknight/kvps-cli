@@ -1,6 +1,5 @@
 ﻿namespace kvps
 
-open System
 open McMaster.Extensions.CommandLineUtils
 open Microsoft.Extensions.DependencyInjection
 open kvps.KeyValues
