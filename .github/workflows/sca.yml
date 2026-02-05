@@ -29,3 +29,7 @@ jobs:
 
       - name: Run SCA
         uses: tonycknight/pkgchk-action@v1
+        with: 
+          scan-issues: true
+          scan-upgrades: true
+          config: pkgchk.config.yml

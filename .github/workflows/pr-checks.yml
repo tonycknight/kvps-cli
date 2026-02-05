@@ -1,0 +1,62 @@
+name: Pull Request checks
+
+permissions:
+  actions: read
+  pull-requests: write
+  security-events: write
+  contents: write
+  checks: write
+  issues: write
+
+on:
+  pull_request:
+    
+jobs:
+  style-rules:
+    name: Check style rules
+    runs-on: ubuntu-latest
+    
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Setup .NET SDK
+        uses: actions/setup-dotnet@v5
+        
+      - name: Tool restore
+        run: dotnet tool restore
+      
+      - name: App restore
+        run: dotnet restore
+
+      - name: Check style
+        run: dotnet fantomas  ./ --check 
+
+  pr-scope:
+    name: Set PR scope
+    runs-on: ubuntu-latest
+    needs: [ size-label ]
+    steps:
+      - uses: actions/labeler@v6
+        name: Set label
+        with:
+          repo-token: "${{ secrets.GITHUB_TOKEN }}"
+
+  size-label:
+    name: Set change size
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set label
+        uses: "pascalgn/size-label-action@v0.5.5"
+        env:
+          GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+        with:
+          sizes: >
+            {
+              "1": "XS",
+              "10": "S",
+              "20": "M",
+              "50": "L",
+              "100": "XL"
+            }
+
+
