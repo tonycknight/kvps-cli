@@ -35,7 +35,7 @@ module ProgramBootstrap =
             |> Option.map (sprintf "An upgrade is available: %s")
 
         let header =
-            [ Nuget.packageId |> Strings.magenta
+            [ Nuget.packageId |> Strings.cyan
               "A key/value pair management tool" |> Strings.yellow
               "" ]
 

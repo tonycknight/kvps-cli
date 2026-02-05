@@ -38,8 +38,6 @@ module Strings =
 
     let yellow (value: string) = Crayon.Output.Bright.Yellow(value)
 
-    let magenta (value: string) = Crayon.Output.Bright.Magenta(value)
-
 module Bool =
     let toRc =
         function
