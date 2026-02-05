@@ -86,12 +86,10 @@ module Commands =
         let kvRepo = repo sp
 
         let value =
-          {
-            KeyValue.key = key.Value |> Strings.trim
+          { KeyValue.key = key.Value |> Strings.trim
             value = value.Value() |> Strings.trim
             tags = (tags.Values |> Strings.trimSeq |> Seq.distinct |> Array.ofSeq)
-            isSecret = (isSecret.HasValue()) || not (isVisible.HasValue())
-          }
+            isSecret = (isSecret.HasValue()) || not (isVisible.HasValue()) }
 
         let! r = value |> kvRepo.SetValueAsync
 
@@ -276,8 +274,7 @@ module Commands =
 
             let data =
               { data with
-                  data = data.data |> Array.map (fun kv -> { kv with tags = cleanTags kv })
-              }
+                  data = data.data |> Array.map (fun kv -> { kv with tags = cleanTags kv }) }
 
             let validationErrors =
               data.data

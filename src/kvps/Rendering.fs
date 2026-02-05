@@ -18,7 +18,9 @@ module Rendering =
 
   let renderKv renderValue (kv: KeyValue) =
     let lines =
-      [ ("Key:", kv.key |> Strings.cyan); ("Value:", kv |> renderValue |> Strings.cyan); ("Tags:", kv |> renderTags) ]
+      [ ("Key:", kv.key |> Strings.cyan)
+        ("Value:", kv |> renderValue |> Strings.cyan)
+        ("Tags:", kv |> renderTags) ]
 
     let len = lines |> Seq.map fst |> Strings.maxLength
 

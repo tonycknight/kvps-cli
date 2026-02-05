@@ -83,10 +83,8 @@ type LiteDbKeyValueRepository(config: Config.IConfigProvider) =
       let col = col db
 
       return
-        {
-          DbInfo.name = dbName ()
-          kvCount = col.Count()
-        }
+        { DbInfo.name = dbName ()
+          kvCount = col.Count() }
     }
 
   interface IKeyValueRepository with

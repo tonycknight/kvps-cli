@@ -35,14 +35,14 @@ module ProgramBootstrap =
       |> Option.map (sprintf "An upgrade is available: %s")
 
     let header =
-      [ Nuget.packageId |> Strings.cyan; "A key/value pair management tool" |> Strings.yellow; "" ]
+      [ Nuget.packageId |> Strings.cyan
+        "A key/value pair management tool" |> Strings.yellow
+        "" ]
 
     let meta =
-      [
-        vsn |> Option.map (sprintf "Version %s" >> Strings.yellow)
+      [ vsn |> Option.map (sprintf "Version %s" >> Strings.yellow)
         nugetInfo |> Option.map Strings.green
-        copyright |> Option.map Strings.yellow
-      ]
+        copyright |> Option.map Strings.yellow ]
       |> Seq.flattenSomes
       |> List.ofSeq
 

@@ -14,8 +14,7 @@ module LiteDbKeyValueRepositoryTests =
 
     let c =
       { kvps.Config.Configuration.Default with
-          dbName = dbName
-      }
+          dbName = dbName }
 
     s.Get().Returns(c) |> ignore
     s
@@ -38,12 +37,10 @@ module LiteDbKeyValueRepositoryTests =
       let repo = repo config
 
       let kv =
-        {
-          KeyValue.key = "aaa"
+        { KeyValue.key = "aaa"
           value = "bbb"
           isSecret = false
-          tags = [||]
-        }
+          tags = [||] }
 
       let! r1 = repo.SetValueAsync kv
 
@@ -64,12 +61,10 @@ module LiteDbKeyValueRepositoryTests =
       let tags1 = [| 1..3 |] |> Array.map (fun x -> x.ToString())
 
       let kv =
-        {
-          KeyValue.key = "aaa"
+        { KeyValue.key = "aaa"
           value = "bbb"
           isSecret = false
-          tags = tags1
-        }
+          tags = tags1 }
 
       let! r1 = repo.SetValueAsync kv
 
@@ -95,12 +90,10 @@ module LiteDbKeyValueRepositoryTests =
       let tags = [| 1..3 |] |> Array.map (fun x -> x.ToString())
 
       let kv =
-        {
-          KeyValue.key = "aaa"
+        { KeyValue.key = "aaa"
           value = "bbb"
           isSecret = false
-          tags = tags
-        }
+          tags = tags }
 
       let! r1 = repo.SetValueAsync kv
 
@@ -125,12 +118,10 @@ module LiteDbKeyValueRepositoryTests =
       let kvs =
         [ 1..3 ]
         |> Seq.map (fun x ->
-          {
-            KeyValue.key = sprintf "aaa%i" x
+          { KeyValue.key = sprintf "aaa%i" x
             value = "bbb"
             isSecret = false
-            tags = [||]
-          })
+            tags = [||] })
         |> Array.ofSeq
 
       kvs
@@ -155,12 +146,10 @@ module LiteDbKeyValueRepositoryTests =
       let kvs =
         [ 1..maxCount ]
         |> Seq.map (fun x ->
-          {
-            KeyValue.key = sprintf "aaa%i" x
+          { KeyValue.key = sprintf "aaa%i" x
             value = "bbb"
             isSecret = false
-            tags = [| x.ToString() |]
-          })
+            tags = [| x.ToString() |] })
         |> Array.ofSeq
 
       kvs
@@ -190,12 +179,10 @@ module LiteDbKeyValueRepositoryTests =
       let kvs =
         [ 1..3 ]
         |> Seq.map (fun x ->
-          {
-            KeyValue.key = sprintf "aaa%i" x
+          { KeyValue.key = sprintf "aaa%i" x
             value = "bbb"
             isSecret = false
-            tags = [||]
-          })
+            tags = [||] })
         |> Array.ofSeq
 
       kvs
@@ -225,12 +212,10 @@ module LiteDbKeyValueRepositoryTests =
       let kvs =
         [ 1..3 ]
         |> Seq.map (fun x ->
-          {
-            KeyValue.key = sprintf "aaa%i" x
+          { KeyValue.key = sprintf "aaa%i" x
             value = "bbb"
             isSecret = false
-            tags = [||]
-          })
+            tags = [||] })
         |> Array.ofSeq
 
       kvs

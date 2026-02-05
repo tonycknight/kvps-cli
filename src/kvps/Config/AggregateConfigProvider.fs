@@ -10,8 +10,7 @@ type AggregateConfigProvider(configRepo: IConfigRepository) =
     { config with
         dbName =
           configRepo.Value(nameof Unchecked.defaultof<Configuration>.dbName)
-          |> Option.nullToDefault config.dbName
-    }
+          |> Option.nullToDefault config.dbName }
 
   interface IConfigProvider with
     member this.Get() = getFromRepo ()
