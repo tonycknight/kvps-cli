@@ -6,6 +6,17 @@ open kvps.KeyValues
 
 module DatabaseCommands =
 
+  let set (configRepo: Config.IConfigRepository) (repo: IKeyValueRepository) (name: CommandArgument) =
+    task {
+      configRepo.Set(nameof Unchecked.defaultof<Config.Configuration>.dbName, name.Value)
+
+      let! info = repo.GetDbInfoAsync()
+
+      info |> Rendering.renderDbInfo |> Console.writeLines
+
+      return true |> Bool.toRc
+    }
+
   let export (repo: IKeyValueRepository) (fileName: CommandArgument) =
     task {
       let! kvs = repo.ListKeysAsync([||])

@@ -205,20 +205,7 @@ module Commands =
 
         let name = nameArg a
 
-        let exec (cts) =
-          task {
-            let configRepo = configRepo sp
-
-            configRepo.Set(nameof Unchecked.defaultof<Config.Configuration>.dbName, name.Value)
-
-            let kvRepo = repo sp
-
-            let! info = kvRepo.GetDbInfoAsync()
-
-            info |> Rendering.renderDbInfo |> Console.writeLines
-
-            return true |> Bool.toRc
-          }
+        let exec (cts) = DatabaseCommands.set (configRepo sp) (repo sp) name
 
         a.OnExecuteAsync(exec))
     )
@@ -231,8 +218,9 @@ module Commands =
 
         let fileName = fileNameArg a
 
-        let exec (cts) = DatabaseCommands.export (repo sp) fileName
-          
+        let exec (cts) =
+          DatabaseCommands.export (repo sp) fileName
+
         a.OnExecuteAsync(exec))
     )
     |> ignore
@@ -244,8 +232,9 @@ module Commands =
 
         let fileName = fileNameArg a
 
-        let exec (cts) = DatabaseCommands.import (repo sp) fileName
-          
+        let exec (cts) =
+          DatabaseCommands.import (repo sp) fileName
+
         a.OnExecuteAsync(exec))
     )
     |> ignore
