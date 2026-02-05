@@ -82,20 +82,7 @@ module Application =
     let isSecret = secretOption cla
     let tags = tagsOption cla
 
-    let exec (cts) =
-      task {
-        let kvRepo = repo sp
-
-        let value =
-          { KeyValue.key = key.Value |> Strings.trim
-            value = value.Value() |> Strings.trim
-            tags = (tags.Values |> Strings.trimSeq |> Seq.distinct |> Array.ofSeq)
-            isSecret = (isSecret.HasValue()) || not (isVisible.HasValue()) }
-
-        let! r = value |> kvRepo.SetValueAsync
-
-        return r |> Bool.toRc
-      }
+    let exec (cts) = Commands.KeyValues.setValue (repo sp) key value isVisible isSecret tags
 
     cla.OnExecuteAsync(exec)
 
