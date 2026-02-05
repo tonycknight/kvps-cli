@@ -50,7 +50,7 @@ jobs:
 
       - name: Consolidate code coverage
         run: |
-          dotnet reportgenerator -reports:./tests/**/coverage.info -targetdir:./publish/codecoverage -reporttypes:Html
+          dotnet reportgenerator -reports:./tests/**/coverage.*.info -targetdir:./publish/codecoverage -reporttypes:Html
 
       - name: Archive Test results
         uses: actions/upload-artifact@v6
