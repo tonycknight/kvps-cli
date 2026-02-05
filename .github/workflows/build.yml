@@ -44,9 +44,9 @@ jobs:
                   
       - name: Run tests
         run: |
-            dotnet tool restore
-            dotnet restore
-            dotnet test -c Debug --filter OS!=Windows --logger "trx;LogFileName=test_results.trx" /p:CollectCoverage=true /p:CoverletOutput=./TestResults/coverage.info /p:CoverletOutputFormat=cobertura
+          dotnet tool restore
+          dotnet restore
+          dotnet test -c Debug --filter OS!=Windows --logger "trx;LogFileName=test_results.trx" /p:CollectCoverage=true /p:CoverletOutput=./TestResults/coverage.info /p:CoverletOutputFormat=cobertura
 
       - name: Consolidate code coverage
         run: |
@@ -105,9 +105,9 @@ jobs:
 
       - name: Build
         run: |
-            dotnet tool restore
-            dotnet restore
-            dotnet pack ./src/kvps/kvps.fsproj -c Release -o ./package /p:PackageVersion=${{ env.package-version-number }} /p:Version=${{ env.package-version-number }} /p:AssemblyInformationalVersion=${{ env.package-version-number }}
+          dotnet tool restore
+          dotnet restore
+          dotnet pack ./src/kvps/kvps.fsproj -c Release -o ./package /p:PackageVersion=${{ env.package-version-number }} /p:Version=${{ env.package-version-number }} /p:AssemblyInformationalVersion=${{ env.package-version-number }}
   
   nuget-release:
     name: Nuget package & release
