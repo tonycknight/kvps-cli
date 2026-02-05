@@ -183,16 +183,7 @@ module Commands =
       (fun a ->
         a |> descr "Show current DB details." |> ignore
 
-        let exec (cts) =
-          task {
-            let kvRepo = repo sp
-
-            let! info = kvRepo.GetDbInfoAsync()
-
-            info |> Rendering.renderDbInfo |> Console.writeLines
-
-            return true |> Bool.toRc
-          }
+        let exec (cts) = DatabaseCommands.show (repo sp)
 
         a.OnExecuteAsync(exec))
     )

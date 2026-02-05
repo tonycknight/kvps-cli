@@ -6,6 +6,15 @@ open kvps.KeyValues
 
 module DatabaseCommands =
 
+  let show (repo: IKeyValueRepository) =
+    task {
+      let! info = repo.GetDbInfoAsync()
+
+      info |> Rendering.renderDbInfo |> Console.writeLines
+
+      return true |> Bool.toRc
+    }
+
   let set (configRepo: Config.IConfigRepository) (repo: IKeyValueRepository) (name: CommandArgument) =
     task {
       configRepo.Set(nameof Unchecked.defaultof<Config.Configuration>.dbName, name.Value)
