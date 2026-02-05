@@ -105,7 +105,7 @@ module Commands =
         let reveal = revealOption cla
         let valueOnly = valueOnlyOption cla
         let copyClipboard = copyToClipboardOption cla
-        
+
         let exec (cts) =
             task {
                 let kvRepo = repo sp
@@ -122,16 +122,15 @@ module Commands =
                         | true -> [ renderValue kv ]
                     | _ -> []
 
-                        
                 Console.writeLines msg
 
-                match (v,copyClipboard.HasValue()) with
-                | (None,_)
+                match (v, copyClipboard.HasValue()) with
+                | (None, _)
                 | (Some _, false) -> ignore 0
-                | (Some kv, true) -> 
+                | (Some kv, true) ->
                     Clipboard.set kv.value
                     Console.writeLine "Copied to clipboard."
-                
+
                 return true |> Bool.toRc
             }
 
