@@ -62,6 +62,11 @@ module Commands =
         opt.LongName <- "valueonly"
         opt
 
+    let private copyToClipboardOption (cla: CommandLineApplication) =
+        let opt = cla.Option("-clip", "Copy to the clipboard.", CommandOptionType.NoValue)
+        opt.LongName <- "clipboard"
+        opt
+
     let private repo (sp: ServiceProvider) = sp.GetService<IKeyValueRepository>()
 
     let private configRepo (sp: ServiceProvider) =
@@ -99,7 +104,8 @@ module Commands =
         let key = keyArg cla
         let reveal = revealOption cla
         let valueOnly = valueOnlyOption cla
-
+        let copyClipboard = copyToClipboardOption cla
+        
         let exec (cts) =
             task {
                 let kvRepo = repo sp
@@ -116,7 +122,16 @@ module Commands =
                         | true -> [ renderValue kv ]
                     | _ -> []
 
+                let clipboard = // TODO: windows?
+                    match (v,copyClipboard.HasValue()) with
+                    | (None,_)
+                    | (Some _, false) -> ""
+                    | (Some kv, true) -> kv.value
+                        
                 Console.writeLines msg
+
+                if clipboard <> "" then
+                    Clipboard.set clipboard
 
                 return true |> Bool.toRc
             }

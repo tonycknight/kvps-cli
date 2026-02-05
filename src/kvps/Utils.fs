@@ -77,6 +77,9 @@ module Console =
 
     let writeLines (values: seq<string>) = values |> Seq.iter writeLine
 
+module Clipboard =
+    let set (value: string) = ignore 0 // TODO: 
+
 module Option =
     let nullToOption (value) =
         if Object.ReferenceEquals(value, null) then
