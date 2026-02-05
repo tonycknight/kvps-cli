@@ -94,34 +94,8 @@ module Application =
     let valueOnly = valueOnlyOption cla
     let copyClipboard = copyToClipboardOption cla
 
-    let exec (cts) =
-      task {
-        let kvRepo = repo sp
-        let! v = key.Value |> Strings.trim |> kvRepo.GetValueAsync
-
-        let msg =
-          match v with
-          | Some kv ->
-            let revealValue = reveal.HasValue()
-            let renderValue = Rendering.renderKvValue revealValue
-
-            match valueOnly.HasValue() with
-            | false -> Rendering.renderKv renderValue kv
-            | true -> [ renderValue kv ]
-          | _ -> []
-
-        Console.writeLines msg
-
-        match (v, copyClipboard.HasValue()) with
-        | (None, _)
-        | (Some _, false) -> ignore 0
-        | (Some kv, true) ->
-          Clipboard.set kv.value
-          Console.writeLine "Copied to clipboard."
-
-        return true |> Bool.toRc
-      }
-
+    let exec (cts) = Commands.KeyValues.getValue (repo sp) key reveal valueOnly copyClipboard
+      
     cla.OnExecuteAsync(exec)
 
   let deleteKeyCmd (sp: ServiceProvider) (cla: CommandLineApplication) =

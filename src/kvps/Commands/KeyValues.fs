@@ -18,3 +18,31 @@ module KeyValues =
 
       return r |> Bool.toRc
     }
+
+  let getValue (repo: IKeyValueRepository) (key: CommandArgument) (reveal: CommandOption) (valueOnly: CommandOption) (copyClipboard: CommandOption) =
+    task {
+      let! v = key.Value |> Strings.trim |> repo.GetValueAsync
+
+      let msg =
+        match v with
+        | Some kv ->
+          let revealValue = reveal.HasValue()
+          let renderValue = Rendering.renderKvValue revealValue
+
+          match valueOnly.HasValue() with
+          | false -> Rendering.renderKv renderValue kv
+          | true -> [ renderValue kv ]
+        | _ -> []
+
+      Console.writeLines msg
+
+      match (v, copyClipboard.HasValue()) with
+      | (None, _)
+      | (Some _, false) -> ignore 0
+      | (Some kv, true) ->
+        Clipboard.set kv.value
+        Console.writeLine "Copied to clipboard."
+
+      return true |> Bool.toRc
+
+    }
