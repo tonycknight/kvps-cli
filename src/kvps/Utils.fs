@@ -40,7 +40,11 @@ module Strings =
 
   let bytes (value: string) = System.Text.Encoding.UTF8.GetBytes(value)
 
+  let fromBytes (data: byte[]) = System.Text.Encoding.UTF8.GetString(data)
 
+  let toBase64 (data: byte[]) = System.Convert.ToBase64String(data)
+
+  let fromBase64 (value: string) = System.Convert.FromBase64String(value)
 
 module Bool =
   let toRc =
