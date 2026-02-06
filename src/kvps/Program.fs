@@ -22,6 +22,7 @@ module ProgramBootstrap =
       .AddSingleton(typedefof<Config.IConfigRepository>, typedefof<Config.EnvVarsConfigRepository>)
       .AddTransient(typedefof<Config.IConfigProvider>, typedefof<Config.AggregateConfigProvider>)
       .AddSingleton(typedefof<KeyValues.IKeyValueRepository>, typedefof<KeyValues.LiteDbKeyValueRepository>)
+      .AddSingleton(typedefof<KeyValues.IKeyValueImporter>, typedefof<KeyValues.KeyValueImporter>)
       .BuildServiceProvider()
 
   let internal appDescription () =
