@@ -6,20 +6,33 @@ open McMaster.Extensions.CommandLineUtils
 
 module KeyValues =
 
-  let setValue (repo: IKeyValueRepository) (key: CommandArgument) (value: CommandOption) (isVisible: CommandOption) (isSecret: CommandOption) (tags: CommandOption) =
+  let setValue
+    (repo: IKeyValueRepository)
+    (key: CommandArgument)
+    (value: CommandOption)
+    (isVisible: CommandOption)
+    (isSecret: CommandOption)
+    (tags: CommandOption)
+    =
     task {
       let value =
-          { KeyValue.key = key.Value |> Strings.trim
-            value = value.Value() |> Strings.trim
-            tags = (tags.Values |> Strings.trimSeq |> Seq.distinct |> Array.ofSeq)
-            isSecret = (isSecret.HasValue()) || not (isVisible.HasValue()) }
+        { KeyValue.key = key.Value |> Strings.trim
+          value = value.Value() |> Strings.trim
+          tags = (tags.Values |> Strings.trimSeq |> Seq.distinct |> Array.ofSeq)
+          isSecret = (isSecret.HasValue()) || not (isVisible.HasValue()) }
 
       let! r = value |> repo.SetValueAsync
 
       return r |> Bool.toRc
     }
 
-  let getValue (repo: IKeyValueRepository) (key: CommandArgument) (reveal: CommandOption) (valueOnly: CommandOption) (copyClipboard: CommandOption) =
+  let getValue
+    (repo: IKeyValueRepository)
+    (key: CommandArgument)
+    (reveal: CommandOption)
+    (valueOnly: CommandOption)
+    (copyClipboard: CommandOption)
+    =
     task {
       let! v = key.Value |> Strings.trim |> repo.GetValueAsync
 
@@ -47,7 +60,7 @@ module KeyValues =
 
     }
 
-  let deleteKey (repo: IKeyValueRepository) (key: CommandArgument) = 
+  let deleteKey (repo: IKeyValueRepository) (key: CommandArgument) =
     task {
       let! r = key.Value |> Strings.trim |> repo.DeleteKeyAsync
 
@@ -57,11 +70,11 @@ module KeyValues =
   let listKeys (repo: IKeyValueRepository) (tags: CommandOption) =
     task {
       let! kvs =
-          tags.Values
-          |> Strings.trimSeq
-          |> Seq.distinct
-          |> Array.ofSeq
-          |> repo.ListKeysAsync
+        tags.Values
+        |> Strings.trimSeq
+        |> Seq.distinct
+        |> Array.ofSeq
+        |> repo.ListKeysAsync
 
       if kvs.Length > 0 then
         kvs |> Rendering.renderKvList |> Console.writeLines

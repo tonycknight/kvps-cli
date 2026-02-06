@@ -38,9 +38,11 @@ module Strings =
 
   let yellow (value: string) = Crayon.Output.Bright.Yellow(value)
 
-  let bytes (value: string) = System.Text.Encoding.UTF8.GetBytes(value)
+  let bytes (value: string) =
+    System.Text.Encoding.UTF8.GetBytes(value)
 
-  let fromBytes (data: byte[]) = System.Text.Encoding.UTF8.GetString(data)
+  let fromBytes (data: byte[]) =
+    System.Text.Encoding.UTF8.GetString(data)
 
   let toBase64 (data: byte[]) = System.Convert.ToBase64String(data)
 
@@ -138,26 +140,28 @@ module LiteDb =
 module Encryption =
   open System.IO
   open System.Security.Cryptography
-    
+
   let private encryptByEncryptor encryptor (value: string) =
-      use outStream = new MemoryStream()
-                  
-      use cryptStream = new CryptoStream(outStream, encryptor, CryptoStreamMode.Write)
-      use cryptWriter = new StreamWriter(cryptStream)
-      cryptWriter.Write value
-      cryptWriter.Flush()
-      cryptStream.FlushFinalBlock()
-      
-      outStream.ToArray()
+    use outStream = new MemoryStream()
+
+    use cryptStream = new CryptoStream(outStream, encryptor, CryptoStreamMode.Write)
+    use cryptWriter = new StreamWriter(cryptStream)
+    cryptWriter.Write value
+    cryptWriter.Flush()
+    cryptStream.FlushFinalBlock()
+
+    outStream.ToArray()
 
   let private key (aes: Aes) (password: string) =
     let key = Strings.bytes password
-    if aes.ValidKeySize key.Length then      
+
+    if aes.ValidKeySize key.Length then
       key
     else
       let key = Array.init<byte> aes.Key.Length (fun _ -> 0uy)
 
       let pw = Strings.bytes password
+
       if pw.Length > key.Length then
         failwith "The password is too big."
 
@@ -168,36 +172,36 @@ module Encryption =
     let iv = Array.init<byte> aes.IV.Length (fun _ -> 0uy)
     let mutable numBytesToRead = aes.IV.Length
     let mutable numBytesRead = 0
-    
-    while numBytesToRead > 0 do 
+
+    while numBytesToRead > 0 do
       let n = stream.Read(iv, numBytesRead, numBytesToRead)
-      numBytesRead <- numBytesRead + n 
+      numBytesRead <- numBytesRead + n
       numBytesToRead <- numBytesToRead - n
 
     iv
 
-  let encrypt (password: string) (value: string) =    
+  let encrypt (password: string) (value: string) =
     use aes = Aes.Create()
-    
+
     let key = password |> key aes
     let iv = aes.IV
-    
+
     use encryptor = aes.CreateEncryptor(key, iv)
 
     let data = encryptByEncryptor encryptor value
-    
+
     data |> Array.append iv
-    
+
   let decrypt (password: string) (data: byte[]) =
     use aes = Aes.Create()
     let key = password |> key aes
-    
+
     use inStream = new MemoryStream(data)
-    
+
     let iv = inStream |> readIv aes
-      
+
     use decryptor = aes.CreateDecryptor(key, iv)
-    
+
     use cryptoStream = new CryptoStream(inStream, decryptor, CryptoStreamMode.Read)
 
     use cryptReader = new StreamReader(cryptoStream)

@@ -30,11 +30,16 @@ module Database =
   let export (repo: IKeyValueRepository) (fileName: CommandArgument) (password: CommandOption) =
     task {
       let! kvs = repo.ListKeysAsync([||])
-      let data = { KeyValueExport.empty with data = kvs }
+      let export = { KeyValueExport.empty with data = kvs }
 
-      let js = Newtonsoft.Json.JsonConvert.SerializeObject(data)
       let f = fileName.Value |> Io.resolvePath
-      js |> Io.writeFile f
+
+      export
+      |> Newtonsoft.Json.JsonConvert.SerializeObject
+      |> Encryption.encrypt (password.Value())
+      |> Strings.toBase64
+      |> Io.writeFile f
+
       f |> sprintf "Written to %s" |> Console.writeLine
 
       return true |> Bool.toRc
@@ -42,12 +47,19 @@ module Database =
 
   let import (repo: IKeyValueRepository) (fileName: CommandArgument) (password: CommandOption) =
     task {
-      let js = fileName.Value |> Io.resolvePath |> Io.readFile
+      let import =
+        fileName.Value
+        |> Io.resolvePath
+        |> Io.readFile
+        |> Strings.fromBase64
+        |> Encryption.decrypt (password.Value())
+        |> Newtonsoft.Json.JsonConvert.DeserializeObject<KeyValueExport>
 
-      let data = Newtonsoft.Json.JsonConvert.DeserializeObject<KeyValueExport>(js)
-
-      if Object.ReferenceEquals(data, null) || Object.ReferenceEquals(data.data, null) then
-        invalidOp "The file was not a valid JSON file."
+      if
+        Object.ReferenceEquals(import, null)
+        || Object.ReferenceEquals(import.data, null)
+      then
+        invalidOp "The file was not a valid import file, or the password is incorrect."
 
       let cleanTags (kv: KeyValue) =
         kv.tags
@@ -56,8 +68,8 @@ module Database =
         |> Option.defaultValue [||]
 
       let data =
-        { data with
-            data = data.data |> Array.map (fun kv -> { kv with tags = cleanTags kv }) }
+        { import with
+            data = import.data |> Array.map (fun kv -> { kv with tags = cleanTags kv }) }
 
       let validationErrors =
         data.data

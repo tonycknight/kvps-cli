@@ -89,7 +89,8 @@ module Application =
     let isSecret = secretOption cla
     let tags = tagsOption cla
 
-    let exec (cts) = Commands.KeyValues.setValue (repo sp) key value isVisible isSecret tags
+    let exec (cts) =
+      Commands.KeyValues.setValue (repo sp) key value isVisible isSecret tags
 
     cla.OnExecuteAsync(exec)
 
@@ -101,8 +102,9 @@ module Application =
     let valueOnly = valueOnlyOption cla
     let copyClipboard = copyToClipboardOption cla
 
-    let exec (cts) = Commands.KeyValues.getValue (repo sp) key reveal valueOnly copyClipboard
-      
+    let exec (cts) =
+      Commands.KeyValues.getValue (repo sp) key reveal valueOnly copyClipboard
+
     cla.OnExecuteAsync(exec)
 
   let deleteKeyCmd (sp: ServiceProvider) (cla: CommandLineApplication) =
@@ -110,7 +112,8 @@ module Application =
 
     let key = keyArg cla
 
-    let exec (cts) = Commands.KeyValues.deleteKey (repo sp) key
+    let exec (cts) =
+      Commands.KeyValues.deleteKey (repo sp) key
 
     cla.OnExecuteAsync(exec)
 
@@ -119,7 +122,8 @@ module Application =
 
     let tags = tagsOption cla
 
-    let exec (cts) = Commands.KeyValues.listKeys (repo sp) tags
+    let exec (cts) =
+      Commands.KeyValues.listKeys (repo sp) tags
 
     cla.OnExecuteAsync(exec)
 
