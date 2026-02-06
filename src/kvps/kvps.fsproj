@@ -18,8 +18,6 @@
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
   </PropertyGroup>
   <ItemGroup>
-    
-    <None Include="paket.references" />
     <Compile Include="Utils.fs" />
     <Compile Include="Config\Entities.fs" />
     <Compile Include="Config\IConfigRepository.fs" />
