@@ -26,9 +26,9 @@
     <Compile Include="Config\AggregateConfigProvider.fs" />
     <Compile Include="KeyValues\Entities.fs" />
     <Compile Include="KeyValues\IKeyValueRepository.fs" />
-    <Compile Include="keyvalues\IKeyValueImporter.fs" />
+    <Compile Include="KeyValues\IKeyValueImporter.fs" />
     <Compile Include="KeyValues\LiteDbKeyValueRepository.fs" />
-    <Compile Include="keyvalues\KeyValueImporter.fs" />
+    <Compile Include="KeyValues\KeyValueImporter.fs" />
     <Compile Include="Rendering.fs" />
     <Compile Include="Nuget.fs" />
     <Compile Include="commands\KeyValues.fs" />
