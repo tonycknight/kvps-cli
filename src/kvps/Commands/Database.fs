@@ -7,6 +7,16 @@ open kvps.KeyValues
 
 module Database =
 
+  let private renderImportResults (result: KeyValueExportResult) =
+    let lines =
+      [ sprintf "File: %s" result.filePath
+        sprintf "Successes: %i" result.successes
+        sprintf "Failures: %i" result.failures ]
+
+    lines |> Console.writeLines
+
+    (result.failures = 0)
+
   let show (repo: IKeyValueRepository) =
     task {
       let! info = repo.GetDbInfoAsync()
@@ -27,73 +37,26 @@ module Database =
       return true |> Bool.toRc
     }
 
-  let export (repo: IKeyValueRepository) (fileName: CommandArgument) (password: CommandOption) =
+  let export
+    (importer: IKeyValueImporter)
+    (repo: IKeyValueRepository)
+    (fileName: CommandArgument)
+    (password: CommandOption)
+    =
     task {
-      let! kvs = repo.ListKeysAsync([||])
-      let export = { KeyValueExport.empty with data = kvs }
+      let! result = importer.ExportAsync repo (password.Value()) (fileName.Value)
 
-      let f = fileName.Value |> Io.resolvePath
-
-      export
-      |> Newtonsoft.Json.JsonConvert.SerializeObject
-      |> Encryption.encrypt (password.Value())
-      |> Strings.toBase64
-      |> Io.writeFile f
-
-      f |> sprintf "Written to %s" |> Console.writeLine
-
-      return true |> Bool.toRc
+      return result |> renderImportResults |> Bool.toRc
     }
 
-  let import (repo: IKeyValueRepository) (fileName: CommandArgument) (password: CommandOption) =
+  let import
+    (importer: IKeyValueImporter)
+    (repo: IKeyValueRepository)
+    (fileName: CommandArgument)
+    (password: CommandOption)
+    =
     task {
-      let import =
-        fileName.Value
-        |> Io.resolvePath
-        |> Io.readFile
-        |> Strings.fromBase64
-        |> Encryption.decrypt (password.Value())
-        |> Newtonsoft.Json.JsonConvert.DeserializeObject<KeyValueExport>
+      let! result = importer.ImportAsync repo (password.Value()) (fileName.Value)
 
-      if
-        Object.ReferenceEquals(import, null)
-        || Object.ReferenceEquals(import.data, null)
-      then
-        invalidOp "The file was not a valid import file, or the password is incorrect."
-
-      let cleanTags (kv: KeyValue) =
-        kv.tags
-        |> Option.nullToOption
-        |> Option.map (fun xs -> xs |> Seq.filter (String.IsNullOrWhiteSpace >> not) |> Array.ofSeq)
-        |> Option.defaultValue [||]
-
-      let data =
-        { import with
-            data = import.data |> Array.map (fun kv -> { kv with tags = cleanTags kv }) }
-
-      let validationErrors =
-        data.data
-        |> Seq.map (fun kv ->
-          if String.IsNullOrWhiteSpace(kv.key) || String.IsNullOrWhiteSpace(kv.value) then
-            Some "Invalid key/value data found."
-          else
-            None)
-        |> Seq.flattenSomes
-        |> Seq.truncate 1
-        |> Strings.join Environment.NewLine
-
-      if validationErrors.Length > 0 then
-        failwith validationErrors
-
-      let mutable count = 0
-
-      for kv in data.data do
-        let! x = repo.SetValueAsync(kv)
-
-        if x then
-          count <- count + 1
-
-      count |> sprintf "%i value(s) imported." |> Console.writeLine
-
-      return true |> Bool.toRc
+      return result |> renderImportResults |> Bool.toRc
     }

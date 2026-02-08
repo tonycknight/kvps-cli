@@ -77,6 +77,8 @@ module Application =
 
   let private repo (sp: ServiceProvider) = sp.GetService<IKeyValueRepository>()
 
+  let private importer (sp: ServiceProvider) = sp.GetService<IKeyValueImporter>()
+
   let private configRepo (sp: ServiceProvider) =
     sp.GetService<Config.IConfigRepository>()
 
@@ -164,7 +166,7 @@ module Application =
         let pw = passwordOption a
 
         let exec (cts) =
-          Commands.Database.export (repo sp) fileName pw
+          Commands.Database.export (importer sp) (repo sp) fileName pw
 
         a.OnExecuteAsync(exec))
     )
@@ -179,7 +181,7 @@ module Application =
         let pw = passwordOption a
 
         let exec (cts) =
-          Commands.Database.import (repo sp) fileName pw
+          Commands.Database.import (importer sp) (repo sp) fileName pw
 
         a.OnExecuteAsync(exec))
     )

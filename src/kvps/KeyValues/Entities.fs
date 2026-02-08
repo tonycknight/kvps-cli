@@ -14,7 +14,10 @@ type KeyValueExport =
     { KeyValueExport.version = "1.0"
       data = [||] }
 
-type KeyValueExportResult = { filePath: string; successes: int; failures: int }
+type KeyValueExportResult =
+  { filePath: string
+    successes: int
+    failures: int }
 
 [<CLIMutable>]
 type KeyValueData =
