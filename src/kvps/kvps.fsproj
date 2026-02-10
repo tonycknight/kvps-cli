@@ -18,7 +18,6 @@
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
   </PropertyGroup>
   <ItemGroup>
-    <None Include="paket.references" />
     <Compile Include="Utils.fs" />
     <Compile Include="Config\Entities.fs" />
     <Compile Include="Config\IConfigRepository.fs" />
@@ -27,10 +26,14 @@
     <Compile Include="Config\AggregateConfigProvider.fs" />
     <Compile Include="KeyValues\Entities.fs" />
     <Compile Include="KeyValues\IKeyValueRepository.fs" />
+    <Compile Include="KeyValues\IKeyValueImporter.fs" />
     <Compile Include="KeyValues\LiteDbKeyValueRepository.fs" />
+    <Compile Include="KeyValues\KeyValueImporter.fs" />
     <Compile Include="Rendering.fs" />
     <Compile Include="Nuget.fs" />
-    <Compile Include="Commands.fs" />
+    <Compile Include="Commands\KeyValues.fs" />
+    <Compile Include="Commands\Database.fs" />
+    <Compile Include="Commands\Application.fs" />
     <Compile Include="Program.fs" />
     <None Include="../../README.md" Pack="true" PackagePath="\" />
   </ItemGroup>
