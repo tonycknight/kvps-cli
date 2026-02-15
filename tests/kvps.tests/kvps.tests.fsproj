@@ -9,6 +9,7 @@
     <Compile Include="TestDataGenerators.fs" />
     <Compile Include="KeyValues\EntityMappingTests.fs" />
     <Compile Include="KeyValues\LiteDbKeyValueRepositoryTests.fs" />
+    <Compile Include="keyvalues\KeyValueImporterTests.fs" />
     <Compile Include="Config\EnvVarsConfigRepositoryTests.fs" />
     <Compile Include="Config\AggregateConfigProviderTests.fs" />
     <Compile Include="StringsTests.fs" />
