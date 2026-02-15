@@ -77,8 +77,10 @@ module Io =
 
   let writeFile (filePath: string) (contents: string) =
     let dir = Path.GetDirectoryName filePath
+
     if dir <> "" && Directory.Exists dir |> not then
       Directory.CreateDirectory dir |> ignore
+
     File.WriteAllText(filePath, contents)
 
   let readFile filePath = System.IO.File.ReadAllText(filePath)

@@ -57,20 +57,28 @@ type KeyValueImporter() =
       }
 
     member this.ImportAsync repo password path =
-      task {
-        let data = path |> Io.resolvePath |> Io.readFile
+      let exMsg = "The file was not a valid import file, or the password is incorrect."
 
-        let import =
-          data
+      task {
+        let data =
+          path
+          |> Io.resolvePath
+          |> Io.readFile
           |> Strings.fromBase64
           |> Encryption.decrypt password
-          |> Newtonsoft.Json.JsonConvert.DeserializeObject<KeyValueExport>
+
+        let import =
+          try
+            data |> Newtonsoft.Json.JsonConvert.DeserializeObject<KeyValueExport>
+          with
+          | :? Newtonsoft.Json.JsonReaderException -> invalidOp exMsg
+          | :? Newtonsoft.Json.JsonSerializationException -> invalidOp exMsg
 
         if
           Object.ReferenceEquals(import, null)
           || Object.ReferenceEquals(import.data, null)
         then
-          invalidOp "The file was not a valid import file, or the password is incorrect."
+          invalidOp exMsg
 
         let data =
           { import with

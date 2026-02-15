@@ -33,9 +33,8 @@ module KeyValueImporterTests =
     task {
       return!
         match keyvalues with
-        | [] -> 
-          task { return results }
-        | h::t -> 
+        | [] -> task { return results }
+        | h :: t ->
           task {
             let! r = repo.SetValueAsync h
             return! setMany repo t (r :: results)
@@ -43,15 +42,17 @@ module KeyValueImporterTests =
     }
 
   let private getMany (repo: IKeyValueRepository) (keys: string seq) =
-    let rec getManyInner (repo: IKeyValueRepository) (keys: string list) (results: KeyValue list)=
+    let rec getManyInner (repo: IKeyValueRepository) (keys: string list) (results: KeyValue list) =
       task {
         return!
           match keys with
           | [] -> task { return results }
-          | h::t ->
+          | h :: t ->
             task {
               let! kv = repo.GetValueAsync h
-              let results = kv |> Option.map (fun k -> k :: results) |> Option.defaultValue results
+
+              let results =
+                kv |> Option.map (fun k -> k :: results) |> Option.defaultValue results
 
               return! getManyInner repo t results
             }
@@ -62,9 +63,10 @@ module KeyValueImporterTests =
       return results |> List.sortBy _.key
     }
 
-
-  [<Property(Arbitrary = [|typeof<Passwords>; typeof<UniqueKeyValues>|])>]
-  let ``ExportAsync ImportAsync are symmetric`` (db1Name: Guid, db2Name: Guid, password: Password, exportName: Guid, keyValues: KeyValue[]) =
+  [<Property(Arbitrary = [| typeof<Passwords>; typeof<UniqueKeyValues> |])>]
+  let ``ExportAsync ImportAsync are symmetric``
+    (db1Name: Guid, db2Name: Guid, password: Password, exportName: Guid, keyValues: KeyValue[])
+    =
     task {
       let keyValues = keyValues |> Array.sortBy _.key
       let repo1 = db1Name.ToString() |> config |> repo
@@ -73,11 +75,11 @@ module KeyValueImporterTests =
       // build repo
       let! setResults = setMany repo1 (List.ofSeq keyValues) []
       setResults |> Seq.forall id |> should equal true
-      
+
       let importer = new KeyValueImporter() :> IKeyValueImporter
 
       // export it
-      let exportPath = exportName.ToString() |> exportPath      
+      let exportPath = exportName.ToString() |> exportPath
       let! exportResult = importer.ExportAsync repo1 password.value exportPath
       exportResult.failures |> should equal 0
       exportResult.successes |> should equal keyValues.Length
@@ -91,16 +93,52 @@ module KeyValueImporterTests =
       importResult.successes |> should equal keyValues.Length
       importResult.filePath |> should equal exportPath
 
-
       let keys = keyValues |> Seq.map _.key
       let! keyValues2 = getMany repo2 keys
-            
-      keyValues 
-      |> Seq.compareWith (fun x y -> match x = y with | true -> 0 | false  -> 1 ) keyValues2 
+
+      keyValues
+      |> Seq.compareWith
+        (fun x y ->
+          match x = y with
+          | true -> 0
+          | false -> 1)
+        keyValues2
       |> should equal 0
-      
+
       return true
     }
 
+  [<Property(Arbitrary = [| typeof<Passwords>; typeof<UniqueKeyValues> |])>]
+  let ``ExportAsync ImportAsync on invalid password throws exception``
+    (db1Name: Guid, db2Name: Guid, password1: Password, exportName: Guid, keyValues: KeyValue[])
+    =
+    task {
+      let keyValues = keyValues |> Array.sortBy _.key
+      let repo1 = db1Name.ToString() |> config |> repo
+      let repo2 = db2Name.ToString() |> config |> repo
 
-  // TODO: invalid passwords!
+      // build repo
+      let! setResults = setMany repo1 (List.ofSeq keyValues) []
+      setResults |> Seq.forall id |> should equal true
+
+      let importer = new KeyValueImporter() :> IKeyValueImporter
+
+      // export it
+      let exportPath = exportName.ToString() |> exportPath
+      let! exportResult = importer.ExportAsync repo1 password1.value exportPath
+      exportResult.failures |> should equal 0
+      exportResult.successes |> should equal keyValues.Length
+      exportResult.filePath |> should equal exportPath
+
+      // try to import it
+      let password2 = password1.value + password1.value
+
+      try
+        let! _ = importer.ImportAsync repo2 password2 exportPath
+        raise (new Exception("No exception raised"))
+
+      with :? InvalidOperationException as ex ->
+        ignore ex
+
+      return true
+    }
