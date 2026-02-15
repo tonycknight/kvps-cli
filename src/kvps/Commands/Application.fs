@@ -5,7 +5,6 @@ open Microsoft.Extensions.DependencyInjection
 open kvps
 open kvps.KeyValues
 
-[<AutoOpen>]
 module Application =
 
   let private descr description (cla: CommandLineApplication) =
@@ -23,7 +22,7 @@ module Application =
 
   let private passwordOption (cla: CommandLineApplication) =
     let opt =
-      cla.Option("-pw", "The password to encrypt/decrypt.", CommandOptionType.SingleValue).IsRequired()
+      cla.Option("-pw", "The password with which to encrypt/decrypt.", CommandOptionType.SingleValue).IsRequired()
 
     opt.LongName <- "password"
     opt
@@ -37,13 +36,13 @@ module Application =
 
   let private publicOption (cla: CommandLineApplication) =
     let opt =
-      cla.Option("-p", "The value is public and always revealed.", CommandOptionType.NoValue)
+      cla.Option("-p", "Mark the value as public and always revealed.", CommandOptionType.NoValue)
 
     opt.LongName <- "public"
     opt
 
   let private secretOption (cla: CommandLineApplication) =
-    let opt = cla.Option("-s", "The value is secret.", CommandOptionType.NoValue)
+    let opt = cla.Option("-s", "Mark the value as secret.", CommandOptionType.NoValue)
     opt.LongName <- "secret"
     opt
 
