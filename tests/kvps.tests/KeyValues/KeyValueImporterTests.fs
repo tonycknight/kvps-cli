@@ -29,23 +29,58 @@ module KeyValueImporterTests =
     let path = System.IO.Path.Join [| dir; "testdata"; name; file |]
     path
 
-  [<Property(Arbitrary = [|typeof<Passwords>; typeof<UniqueKeyValues>|])>]
-  let ``ExportAsync ImportAsync are symmetric`` (db1Name: Guid, db2Name: Guid, password: Password, exportName: Guid, keyValue: KeyValue) =
+  let rec private setMany (repo: IKeyValueRepository) (keyvalues: KeyValue list) (results: bool list) =
     task {
+      return!
+        match keyvalues with
+        | [] -> 
+          task { return results }
+        | h::t -> 
+          task {
+            let! r = repo.SetValueAsync h
+            return! setMany repo t (r :: results)
+          }
+    }
+
+  let private getMany (repo: IKeyValueRepository) (keys: string seq) =
+    let rec getManyInner (repo: IKeyValueRepository) (keys: string list) (results: KeyValue list)=
+      task {
+        return!
+          match keys with
+          | [] -> task { return results }
+          | h::t ->
+            task {
+              let! kv = repo.GetValueAsync h
+              let results = kv |> Option.map (fun k -> k :: results) |> Option.defaultValue results
+
+              return! getManyInner repo t results
+            }
+      }
+
+    task {
+      let! results = getManyInner repo (keys |> List.ofSeq) []
+      return results |> List.sortBy _.key
+    }
+
+
+  [<Property(Arbitrary = [|typeof<Passwords>; typeof<UniqueKeyValues>|])>]
+  let ``ExportAsync ImportAsync are symmetric`` (db1Name: Guid, db2Name: Guid, password: Password, exportName: Guid, keyValues: KeyValue[]) =
+    task {
+      let keyValues = keyValues |> Array.sortBy _.key
       let repo1 = db1Name.ToString() |> config |> repo
       let repo2 = db2Name.ToString() |> config |> repo
 
-      // build repos      
-      let! r1 = repo1.SetValueAsync keyValue
-      r1 |> should equal true
-
+      // build repo
+      let! setResults = setMany repo1 (List.ofSeq keyValues) []
+      setResults |> Seq.forall id |> should equal true
+      
       let importer = new KeyValueImporter() :> IKeyValueImporter
 
       // export it
       let exportPath = exportName.ToString() |> exportPath      
       let! exportResult = importer.ExportAsync repo1 password.value exportPath
       exportResult.failures |> should equal 0
-      exportResult.successes |> should equal 1
+      exportResult.successes |> should equal keyValues.Length
       exportResult.filePath |> should equal exportPath
 
       // import it
@@ -53,13 +88,17 @@ module KeyValueImporterTests =
 
       // verify
       importResult.failures |> should equal 0
-      importResult.successes |> should equal 1
+      importResult.successes |> should equal keyValues.Length
       importResult.filePath |> should equal exportPath
 
-      let! kv2 = repo2.GetValueAsync keyValue.key
-      
-      kv2.Value.value |> should equal keyValue.value
 
+      let keys = keyValues |> Seq.map _.key
+      let! keyValues2 = getMany repo2 keys
+            
+      keyValues 
+      |> Seq.compareWith (fun x y -> match x = y with | true -> 0 | false  -> 1 ) keyValues2 
+      |> should equal 0
+      
       return true
     }
 
