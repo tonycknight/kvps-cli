@@ -77,3 +77,11 @@ module StringsTests =
       |> Option.defaultValue ""
 
     result = longest.Length
+
+  [<Property>]
+  let ``toBase64 fromBase64 is symmetric`` (value: string) =
+
+    let prop =
+      Strings.bytes >> Strings.toBase64 >> Strings.fromBase64 >> Strings.fromBytes
+
+    prop value = value

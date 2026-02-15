@@ -6,15 +6,17 @@
     <GenerateProgramFile>false</GenerateProgramFile>
   </PropertyGroup>
   <ItemGroup>
-    <None Include="paket.references" />
+    <Compile Include="TestDataGenerators.fs" />
     <Compile Include="KeyValues\EntityMappingTests.fs" />
     <Compile Include="KeyValues\LiteDbKeyValueRepositoryTests.fs" />
+    <Compile Include="KeyValues\KeyValueImporterTests.fs" />
     <Compile Include="Config\EnvVarsConfigRepositoryTests.fs" />
     <Compile Include="Config\AggregateConfigProviderTests.fs" />
     <Compile Include="StringsTests.fs" />
     <Compile Include="IoTests.fs" />
     <Compile Include="ReflectionTests.fs" />
     <Compile Include="BoolTests.fs" />
+    <Compile Include="EncryptionTests.fs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\src\kvps\kvps.fsproj" />
