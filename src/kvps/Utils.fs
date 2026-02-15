@@ -193,16 +193,20 @@ module Encryption =
     data |> Array.append iv
 
   let decrypt (password: string) (data: byte[]) =
-    use aes = Aes.Create()
-    let key = password |> key aes
+    try
+      use aes = Aes.Create()
+      let key = password |> key aes
 
-    use inStream = new MemoryStream(data)
+      use inStream = new MemoryStream(data)
 
-    let iv = inStream |> readIv aes
+      let iv = inStream |> readIv aes
 
-    use decryptor = aes.CreateDecryptor(key, iv)
+      use decryptor = aes.CreateDecryptor(key, iv)
 
-    use cryptoStream = new CryptoStream(inStream, decryptor, CryptoStreamMode.Read)
+      use cryptoStream = new CryptoStream(inStream, decryptor, CryptoStreamMode.Read)
 
-    use cryptReader = new StreamReader(cryptoStream)
-    cryptReader.ReadToEnd()
+      use cryptReader = new StreamReader(cryptoStream)
+      cryptReader.ReadToEnd()
+
+    with :? System.Security.Cryptography.CryptographicException as ex ->
+      invalidOp "Incorrect password"

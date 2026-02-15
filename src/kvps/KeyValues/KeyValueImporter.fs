@@ -5,21 +5,21 @@ open kvps
 
 type KeyValueImporter() =
   let cleanTags (kv: KeyValue) =
-          kv.tags
-          |> Option.nullToOption
-          |> Option.map (fun xs -> xs |> Seq.filter (String.IsNullOrWhiteSpace >> not) |> Array.ofSeq)
-          |> Option.defaultValue [||]
+    kv.tags
+    |> Option.nullToOption
+    |> Option.map (fun xs -> xs |> Seq.filter (String.IsNullOrWhiteSpace >> not) |> Array.ofSeq)
+    |> Option.defaultValue [||]
 
   let validateKeyValues values =
-          values
-          |> Seq.map (fun kv ->
-            if String.IsNullOrWhiteSpace(kv.key) || String.IsNullOrWhiteSpace(kv.value) then
-              Some "Invalid key/value data found."
-            else
-              None)
-          |> Seq.flattenSomes
-          |> Seq.truncate 1
-          |> Strings.join Environment.NewLine
+    values
+    |> Seq.map (fun kv ->
+      if String.IsNullOrWhiteSpace(kv.key) || String.IsNullOrWhiteSpace(kv.value) then
+        Some "Invalid key/value data found."
+      else
+        None)
+    |> Seq.flattenSomes
+    |> Seq.truncate 1
+    |> Strings.join Environment.NewLine
 
   let apply (repo: IKeyValueRepository) values =
     task {
@@ -58,10 +58,10 @@ type KeyValueImporter() =
 
     member this.ImportAsync repo password path =
       task {
-        let path = path |> Io.resolvePath |> Io.readFile
-
+        let data = path |> Io.resolvePath |> Io.readFile
+        
         let import =
-          path
+          data
           |> Strings.fromBase64
           |> Encryption.decrypt password
           |> Newtonsoft.Json.JsonConvert.DeserializeObject<KeyValueExport>
@@ -75,16 +75,16 @@ type KeyValueImporter() =
         let data =
           { import with
               data = import.data |> Array.map (fun kv -> { kv with tags = cleanTags kv }) }
-                      
+
         let errors = validateKeyValues data.data
-          
+
         if errors.Length > 0 then
           failwith errors
 
         let! (count, errorCount) = apply repo data.data
-        
+
         return
           { KeyValueExportResult.filePath = path
-            successes = count 
+            successes = count
             failures = errorCount }
       }
