@@ -215,3 +215,14 @@ module Encryption =
 
     with :? System.Security.Cryptography.CryptographicException as ex ->
       invalidOp "Incorrect password"
+
+  let dpapiEncrypt (value: string) =    
+    match Strings.bytes value with
+    | [||] -> [||] |> Strings.toBase64
+    | buffer -> ProtectedData.Protect (buffer, null, DataProtectionScope.CurrentUser)|> Strings.toBase64
+
+  let dpapiDecrypt (value: string) =
+    match Strings.fromBase64 value with
+    | [||] -> [||] |> Strings.fromBytes
+    | buffer -> ProtectedData.Unprotect (buffer, null, DataProtectionScope.CurrentUser) |> Strings.fromBytes 
+    
