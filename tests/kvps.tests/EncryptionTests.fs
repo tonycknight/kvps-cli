@@ -2,6 +2,7 @@ namespace kvps.tests
 
 open kvps
 open FsCheck.Xunit
+open Xunit
 
 module Encryption =
 
@@ -13,6 +14,7 @@ module Encryption =
     prop value = value
 
   [<Property(Verbose = true, MaxTest = 1000)>]
+  [<Trait("OS", "Windows")>]
   let ``dpapiEncrypt dpapiDecrypt is symmetric`` (value: string) =
     let prop = Encryption.dpapiEncrypt >> Encryption.dpapiDecrypt 
     
