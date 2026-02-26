@@ -76,12 +76,13 @@ jobs:
         if: always()
         with:
           name: unit test results
-          path: ${{ github.workspace }}/tests/kvps.tests/TestResults/test_results.trx
+          path: ${{ github.workspace }}\tests\kvps.tests\TestResults\test_results.trx
           reporter: dotnet-trx
           token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Code coverage results
         uses: 5monkeys/cobertura-action@master
+        if: always()
         with:
           path: ${{ github.workspace }}/tests/kvps.tests/TestResults/coverage.net10.0.info
           repo_token: ${{ secrets.GITHUB_TOKEN }}
