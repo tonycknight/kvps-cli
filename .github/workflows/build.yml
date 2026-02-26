@@ -77,7 +77,7 @@ jobs:
         with:
           name: unit test results
           #path: ${{ github.workspace }}\tests\kvps.tests\TestResults\test_results.trx
-          path: ./tests/kvps.tests/TestResults\test_results.trx
+          path: ./tests/kvps.tests/TestResults/test_results.trx
           reporter: dotnet-trx
           token: ${{ secrets.GITHUB_TOKEN }}
 
