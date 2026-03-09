@@ -42,10 +42,26 @@ type KeyValueArbitrary =
 
 type UniqueKeyValues =
   static member Generate() : Arbitrary<KeyValue> =
-    let kvs = KeyValueArbitrary.Generate().Generator
     let guids = ArbMap.defaults |> ArbMap.generate<Guid>
 
     KeyValueArbitrary.Generate().Generator
     |> Gen.zip guids
     |> Gen.map (fun (g, kv) -> { kv with key = $"{kv.key}{g}" })
+    |> Arb.fromGen
+
+type V1KeyValueDataArbitrary =
+  static member Generate() : Arbitrary<KeyValueData> =
+    UniqueKeyValues.Generate().Generator
+    |> Gen.map (fun (kv) ->
+      { KeyValueData._id = kv.key
+        KeyValueData.value = kv.value
+        KeyValueData.version = EntityMapping.V1KeyValueData
+        KeyValueData.isSecret = kv.isSecret
+        KeyValueData.tags = kv.tags })
+    |> Arb.fromGen
+
+type LatestVersionKeyValueDataArbitrary =
+  static member Generate() : Arbitrary<KeyValueData> =
+    UniqueKeyValues.Generate().Generator
+    |> Gen.map (fun (kv) -> EntityMapping.mapToKvData kv)
     |> Arb.fromGen
