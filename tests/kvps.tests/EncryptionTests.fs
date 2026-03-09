@@ -17,20 +17,23 @@ module Encryption =
   [<Property(Verbose = true, MaxTest = 1000)>]
   [<Trait("OS", "Windows")>]
   let ``dpapiEncrypt dpapiDecrypt is symmetric`` (value: string) =
-    let prop = Encryption.dpapiEncrypt >> Encryption.dpapiDecrypt 
-    
+    let prop = Encryption.dpapiEncrypt >> Encryption.dpapiDecrypt
+
     value = prop value
 
   [<Property(Verbose = true, MaxTest = 1000)>]
   [<Trait("OS", "Windows")>]
   let ``dpapiEncrypt is not deterministic`` () =
-    let prop value = 
-      let results = [| 0 .. 11 |] |> Array.map (fun _ -> Encryption.dpapiEncrypt value)
+    let prop value =
+      let results = [| 0..11 |] |> Array.map (fun _ -> Encryption.dpapiEncrypt value)
 
       let grps = results |> Array.groupBy id
 
       Seq.length grps = results.Length
 
-    Prop.forAll 
-      (ArbMap.defaults |> ArbMap.generate<string> |> Gen.filter (fun s -> s.Length > 0) |> Arb.fromGen )
+    Prop.forAll
+      (ArbMap.defaults
+       |> ArbMap.generate<string>
+       |> Gen.filter (fun s -> s.Length > 0)
+       |> Arb.fromGen)
       prop

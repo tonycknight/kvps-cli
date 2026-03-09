@@ -39,16 +39,16 @@ module EntityMapping =
   let internal V2KeyValueData = "v2"
 
   let private mapToKvV1 (kv: KeyValueData) =
-      { KeyValue.key = kv._id
-        value = kv.value
-        tags = kv.tags
-        isSecret = kv.isSecret }
+    { KeyValue.key = kv._id
+      value = kv.value
+      tags = kv.tags
+      isSecret = kv.isSecret }
 
   let private mapToKvV2 (kv: KeyValueData) =
-      { KeyValue.key = kv._id
-        value = Encryption.dpapiDecrypt kv.value
-        tags = kv.tags
-        isSecret = kv.isSecret }
+    { KeyValue.key = kv._id
+      value = Encryption.dpapiDecrypt kv.value
+      tags = kv.tags
+      isSecret = kv.isSecret }
 
   let private mapToKvFunc version =
     match version with
@@ -60,7 +60,7 @@ module EntityMapping =
     let map = mapToKvFunc kv.version
 
     map kv
-      
+
   let mapToKvData (kv: KeyValue) =
     { KeyValueData._id = kv.key
       version = V2KeyValueData

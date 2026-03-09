@@ -52,16 +52,15 @@ type UniqueKeyValues =
 type V1KeyValueDataArbitrary =
   static member Generate() : Arbitrary<KeyValueData> =
     UniqueKeyValues.Generate().Generator
-    |> Gen.map (fun (kv) -> 
-                            { KeyValueData._id = kv.key
-                              KeyValueData.value = kv.value
-                              KeyValueData.version = EntityMapping.V1KeyValueData
-                              KeyValueData.isSecret = kv.isSecret
-                              KeyValueData.tags = kv.tags })      
+    |> Gen.map (fun (kv) ->
+      { KeyValueData._id = kv.key
+        KeyValueData.value = kv.value
+        KeyValueData.version = EntityMapping.V1KeyValueData
+        KeyValueData.isSecret = kv.isSecret
+        KeyValueData.tags = kv.tags })
     |> Arb.fromGen
 
-
-type LatestVersionKeyValueDataArbitrary =  
+type LatestVersionKeyValueDataArbitrary =
   static member Generate() : Arbitrary<KeyValueData> =
     UniqueKeyValues.Generate().Generator
     |> Gen.map (fun (kv) -> EntityMapping.mapToKvData kv)

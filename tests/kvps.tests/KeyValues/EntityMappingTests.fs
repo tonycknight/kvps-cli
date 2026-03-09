@@ -6,7 +6,7 @@ open kvps.tests
 open FsCheck.Xunit
 
 module EntityMappingTests =
-    
+
   [<Property(Verbose = true)>]
   let ``mapToKvData / mapToKv symmetrically maps the value`` (value: KeyValue) =
     let r = value |> EntityMapping.mapToKvData |> EntityMapping.mapToKv
@@ -36,7 +36,7 @@ module EntityMappingTests =
     let r = EntityMapping.mapToKvData value
 
     r.tags = value.tags
-      
+
   [<Property(Arbitrary = [| typeof<V1KeyValueDataArbitrary> |], Verbose = true)>]
   let ``mapToKv v1 maps the key`` (value: KeyValueData) =
     let r = EntityMapping.mapToKv value
@@ -87,7 +87,11 @@ module EntityMappingTests =
 
   [<Property(Arbitrary = [| typeof<V1KeyValueDataArbitrary> |], Verbose = true)>]
   let ``mapToKv v1/v2 upgrade maps the value`` (value: KeyValueData) =
-    let r = value |> EntityMapping.mapToKv |> EntityMapping.mapToKvData |> EntityMapping.mapToKv
+    let r =
+      value
+      |> EntityMapping.mapToKv
+      |> EntityMapping.mapToKvData
+      |> EntityMapping.mapToKv
 
     r.value = value.value
 
