@@ -46,7 +46,7 @@ jobs:
       - uses: actions/checkout@v7
 
       - name: Setup .NET Core SDK
-        uses: actions/setup-dotnet@v5
+        uses: actions/setup-dotnet@v6
                   
       - name: Run tests
         run: |
@@ -103,7 +103,7 @@ jobs:
       - uses: actions/checkout@v7
 
       - name: Setup .NET Core SDK
-        uses: actions/setup-dotnet@v5
+        uses: actions/setup-dotnet@v6
         
       - name: Set Build version
         if: github.ref != 'refs/heads/main'
@@ -126,7 +126,7 @@ jobs:
       - uses: actions/checkout@v7
 
       - name: Setup .NET Core SDK
-        uses: actions/setup-dotnet@v5
+        uses: actions/setup-dotnet@v6
 
       - name: Determine version
         run: echo "package-version-number=$(git describe --tags --dirty)" >> $GITHUB_ENV
