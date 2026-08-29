@@ -2,7 +2,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFrameworks>net8.0;net10.0</TargetFrameworks>
+    <TargetFramework>net10.0</TargetFramework>
     <Copyright>Copyright 2022 Tony Knight</Copyright>
     <Version>0.0.0</Version>
     <RootNamespace>kvps</RootNamespace>
