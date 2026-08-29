@@ -63,7 +63,7 @@ jobs:
         if: always()
         with:
           name: unit test results
-          path: .\TestResults\*.trx
+          path: ./TestResults/*.trx
           reporter: dotnet-trx
           token: ${{ secrets.GITHUB_TOKEN }}
 
