@@ -116,11 +116,11 @@ module Reflection =
 
   let getVersionValue attrs =
     attrs
-    |> getAttrValue<System.Reflection.AssemblyInformationalVersionAttribute> (fun a -> a.InformationalVersion)
+    |> getAttrValue<System.Reflection.AssemblyInformationalVersionAttribute>(fun a -> a.InformationalVersion)
 
   let getCopyrightValue attrs =
     attrs
-    |> getAttrValue<System.Reflection.AssemblyCopyrightAttribute> (fun a -> a.Copyright)
+    |> getAttrValue<System.Reflection.AssemblyCopyrightAttribute>(fun a -> a.Copyright)
 
 module Seq =
   let flattenSomes (values: seq<'a option>) =
